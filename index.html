@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>DJ Training Reaction V7</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body, html { width: 100%; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; overflow-x: hidden; }
+
+        /* TELA DE CONFIGURAÇÃO */
+        #screen-config { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 20px; overflow-y: auto; }
+        .card { background-color: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); width: 100%; max-width: 720px; margin-bottom: 20px; }
+        h1 { text-align: center; margin-bottom: 5px; color: #4caf50; font-size: 26px; }
+        .subtitle { text-align: center; color: #aaa; font-size: 13px; margin-bottom: 20px; }
+        
+        /* PAINÉIS DE MÓDULOS */
+        .mod-box { background-color: #262626; border: 1px solid #3a3a3a; padding: 14px 16px; border-radius: 8px; margin-bottom: 14px; }
+        .mod-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 15px; color: #fff; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px; }
+        .mod-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        
+        .custom-select-box { background-color: #1a1a1a; padding: 10px; border-radius: 6px; border: 1px solid #444; margin-top: 8px; }
+        .custom-select-box label { display: inline-flex; margin-right: 12px; margin-bottom: 6px; font-size: 12px; }
+        .text-input-custom { width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #555; background: #333; color: #fff; font-size: 13px; margin-top: 4px; }
+
+        label { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; color: #ddd; }
+        input[type="checkbox"], input[type="radio"] { accent-color: #4caf50; width: 16px; height: 16px; cursor: pointer; }
+        
+        .section-title { font-size: 15px; margin: 15px 0 10px 0; color: #4caf50; font-weight: bold; }
+        .input-group { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 13px; }
+        input[type="number"] { width: 65px; padding: 5px; border-radius: 4px; border: 1px solid #555; background: #333; color: #fff; text-align: center; }
+        
+        .btn-file { display: inline-block; background-color: #333; color: #fff; padding: 5px 10px; border-radius: 4px; border: 1px solid #555; cursor: pointer; font-size: 11px; }
+        .btn-file:hover { background-color: #444; }
+        
+        .btn-iniciar { width: 100%; padding: 14px; background-color: #2e7d32; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s; }
+        .btn-iniciar:hover { background-color: #1b5e20; }
+
+        /* TELA DE TREINO */
+        #screen-training { display: none; width: 100vw; height: 100vh; background-color: #000000; position: fixed; top: 0; left: 0; z-index: 9999; align-items: center; justify-content: center; }
+        #stimulus-text { font-size: 28vw; font-weight: bold; color: #ffffff; text-align: center; line-height: 1; text-shadow: 0px 0px 20px rgba(0,0,0,0.8); }
+        #stimulus-img { max-width: 95vw; max-height: 95vh; object-fit: contain; display: none; }
+
+        /* PLACA COMPLETA EXPANDIDA PARA TELA INTEIRA */
+        #stimulus-board { display: none; width: 98vw; height: 96vh; background-color: #ffffff; padding: 2vh 2vw; border-radius: 12px; box-shadow: 0px 0px 40px rgba(0,0,0,0.9); }
+        .grid-board { display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); width: 100%; height: 100%; align-items: center; justify-items: center; }
+        .grid-board div { font-size: 11vh; font-weight: bold; line-height: 1; text-align: center; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE CONFIGURAÇÃO DETALHADA -->
+    <div id="screen-config">
+        <div class="card">
+            <h1>DJ Training Reaction V7</h1>
+            <div class="subtitle">Seleção Personalizada, Placa Completa (Verde/Laranja) & Dupla Tarefa</div>
+
+            <div class="section-title">1. Configuração de Estímulos e Itens Selecionados</div>
+
+            <!-- MÓDULO PLACA COMPLETA (MATRIZ 6x5 FIXA) -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>🔲 Placa Completa Tela Cheia (Matriz 6x5)</span>
+                    <label><input type="checkbox" id="use-board"> Ativar Módulo</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="dupla-board"> Dupla Tarefa (+ Cor de Fundo)</label>
+                    <label><input type="checkbox" id="audio-board" checked> Áudio ("Placa")</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Selecione os estilos da placa:</span><br>
+                    <div style="margin-top: 5px;">
+                        <label><input type="checkbox" id="board-style-pb" checked> Preto e Branco Original (Fixa)</label>
+                        <label><input type="checkbox" id="board-style-color" checked> Cores Verdes e Laranjas (Fixa)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÓDULO SETAS DIRECIONAIS -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>➔ Setas Direcionais (Isoladas)</span>
+                    <label><input type="checkbox" id="use-setas"> Ativar Módulo</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="dupla-setas"> Dupla Tarefa (+ Cor de Fundo)</label>
+                    <label><input type="checkbox" id="audio-setas" checked> Áudio Falado</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Escolha as direções permitidas:</span><br>
+                    <div id="box-select-setas" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- MÓDULO SETAS + ESTRELAS -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>★➔ Setas + Estrelas (Isoladas)</span>
+                    <label><input type="checkbox" id="use-setas-estrelas"> Ativar Módulo</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="dupla-setas-estrelas"> Dupla Tarefa (+ Cor de Fundo)</label>
+                    <label><input type="checkbox" id="audio-setas-estrelas" checked> Áudio Falado</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Escolha os elementos permitidos:</span><br>
+                    <div id="box-select-setas-estrelas" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- MÓDULO NÚMEROS -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>🔢 Números</span>
+                    <label><input type="checkbox" id="use-num" checked> Ativar Módulo</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="dupla-num"> Dupla Tarefa (+ Cor de Fundo)</label>
+                    <label><input type="checkbox" id="audio-num" checked> Áudio Falado</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Escolha os números permitidos:</span><br>
+                    <div id="box-select-numeros" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- MÓDULO LETRAS -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>🔤 Letras</span>
+                    <label><input type="checkbox" id="use-let"> Ativar Módulo</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="dupla-let"> Dupla Tarefa (+ Cor de Fundo)</label>
+                    <label><input type="checkbox" id="audio-let" checked> Áudio Falado</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Digite as letras desejadas (separadas por vírgula):</span>
+                    <input type="text" id="custom-letras" class="text-input-custom" value="A, B, C, D, E, F, G, H">
+                </div>
+            </div>
+
+            <!-- MÓDULO SÍMBOLOS -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>★ Símbolos Diversos</span>
+                    <label><input type="checkbox" id="use-sim"> Ativar Módulo</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="dupla-sim"> Dupla Tarefa (+ Cor de Fundo)</label>
+                    <label><input type="checkbox" id="audio-sim" checked> Áudio Falado</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Escolha os símbolos permitidos:</span><br>
+                    <div id="box-select-simbolos" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- MÓDULO GEOMETRIA -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>▲ Geometria</span>
+                    <label><input type="checkbox" id="use-geo"> Ativar Módulo</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="dupla-geo"> Dupla Tarefa (+ Cor de Fundo)</label>
+                    <label><input type="checkbox" id="audio-geo" checked> Áudio Falado</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Escolha as formas permitidas:</span><br>
+                    <div id="box-select-geometrias" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- MÓDULO CORES -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>🎨 Cores (Isoladas e Dupla Tarefa)</span>
+                    <label><input type="checkbox" id="use-cor"> Ativar Cores Isoladas</label>
+                </div>
+                <div class="mod-options">
+                    <label><input type="checkbox" id="audio-cor" checked> Falar Nome da Cor</label>
+                </div>
+                <div class="custom-select-box">
+                    <span style="font-size: 11px; color: #aaa;">Escolha as cores permitidas no treino:</span><br>
+                    <div id="box-select-cores" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <!-- MÓDULO IMAGENS PRÓPRIAS -->
+            <div class="mod-box">
+                <div class="mod-header">
+                    <span>🖼️ Imagens Personalizadas</span>
+                    <label><input type="checkbox" id="use-img"> Ativar Módulo</label>
+                </div>
+                <div style="margin-top: 5px;">
+                    <label for="file-picker" class="btn-file">📁 Adicionar Imagens do Computador</label>
+                    <input type="file" id="file-picker" multiple accept="image/*" style="display:none;">
+                    <span id="img-count" style="font-size: 11px; color: #aaa; margin-left: 8px;">0 imagens salvas</span>
+                </div>
+            </div>
+
+            <div class="section-title">2. Modo de Avanço e Duração</div>
+            
+            <div class="mod-box">
+                <label><input type="radio" name="modo" value="auto" checked> <strong>Automático por Tempo</strong></label>
+                <div class="input-group">
+                    <span>Segundos por Estímulo:</span>
+                    <input type="number" id="intervalo" value="2" min="0.5" step="0.5">
+                </div>
+                <br>
+                <label><input type="radio" name="modo" value="manual"> <strong>Manual (Espaço ou Enter avança)</strong></label>
+            </div>
+
+            <div class="mod-box">
+                <div class="input-group">
+                    <span><strong>Tempo Total de Treino (segundos):</strong></span>
+                    <input type="number" id="tempo-total" value="60" min="5">
+                </div>
+            </div>
+
+            <button class="btn-iniciar" onclick="iniciarTreino()">▶ INICIAR TREINO</button>
+        </div>
+    </div>
+
+    <!-- TELA DE TREINO -->
+    <div id="screen-training">
+        <div id="stimulus-text"></div>
+        <img id="stimulus-img" src="" alt="Estímulo">
+        <div id="stimulus-board">
+            <div id="grid-container" class="grid-board"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mapeamento idêntico da imagem enviada (Matriz 6x5)
+        const matrizPlacaOriginal = [
+            ["★", "➔", "⬆", "⬅", "⬇", "★"],
+            ["★", "⬅", "⬅", "⬇", "➔", "⬆"],
+            ["⬇", "➔", "★", "➔", "⬆", "⬆"],
+            ["★", "⬅", "➔", "⬆", "⬇", "★"],
+            ["⬆", "⬆", "⬇", "➔", "⬅", "➔"],
+            ["⬇", "★", "★", "⬅", "⬇", "⬆"]
+        ];
+
+        // Mapeamento FIXO de Cores Verde (#00A859) e Laranja (#FF6600)
+        const matrizCoresFixas = [
+            ["#FF6600", "#00A859", "#FF6600", "#00A859", "#FF6600", "#00A859"],
+            ["#00A859", "#FF6600", "#00A859", "#FF6600", "#00A859", "#FF6600"],
+            ["#FF6600", "#00A859", "#FF6600", "#00A859", "#FF6600", "#00A859"],
+            ["#00A859", "#FF6600", "#00A859", "#FF6600", "#00A859", "#FF6600"],
+            ["#FF6600", "#00A859", "#FF6600", "#00A859", "#FF6600", "#00A859"],
+            ["#00A859", "#FF6600", "#00A859", "#FF6600", "#00A859", "#FF6600"]
+        ];
+
+        const listaSetas = [
+            { char: "➔", nome: "Direita" },
+            { char: "⬅", nome: "Esquerda" },
+            { char: "⬆", nome: "Cima" },
+            { char: "⬇", nome: "Baixo" }
+        ];
+
+        const listaSetasEstrelas = [
+            { char: "➔", nome: "Direita" },
+            { char: "⬅", nome: "Esquerda" },
+            { char: "⬆", nome: "Cima" },
+            { char: "⬇", nome: "Baixo" },
+            { char: "★", nome: "Estrela" }
+        ];
+
+        const listaNumeros = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        const listaSimbolos = [
+            { char: "★", nome: "Estrela" }, { char: "✦", nome: "Brilho" }, 
+            { char: "♠", nome: "Espadas" }, { char: "♣", nome: "Paus" }, 
+            { char: "♥", nome: "Corações" }, { char: "♦", nome: "Ouros" }, 
+            { char: "✖", nome: "Xis" }, { char: "✔", nome: "Check" }
+        ];
+        const listaGeometrias = [
+            { char: "▲", nome: "Triângulo" }, { char: "■", nome: "Quadrado" }, 
+            { char: "●", nome: "Círculo" }, { char: "⬡", nome: "Hexágono" }, 
+            { char: "▰", nome: "Retângulo" }
+        ];
+        const listaCores = [
+            { hex: "#FF0000", nome: "Vermelho" }, { hex: "#00FF00", nome: "Verde" }, 
+            { hex: "#0000FF", nome: "Azul" }, { hex: "#FFFF00", nome: "Amarelo" }, 
+            { hex: "#FF00FF", nome: "Rosa" }, { hex: "#00FFFF", nome: "Ciano" }, 
+            { hex: "#FFA500", nome: "Laranja" }, { hex: "#800080", nome: "Roxo" }
+        ];
+
+        let customImages = [];
+        let pool = [];
+        let autoTimer = null;
+        let totalTimer = null;
+        let treinoAtivo = false;
+
+        const synth = window.speechSynthesis;
+
+        function renderizarSeletores() {
+            // Setas
+            const boxSetas = document.getElementById('box-select-setas');
+            listaSetas.forEach(s => {
+                boxSetas.innerHTML += `<label><input type="checkbox" class="chk-seta-item" value="${s.char}" data-nome="${s.nome}" checked> ${s.char} (${s.nome})</label>`;
+            });
+
+            // Setas + Estrelas
+            const boxSetasEstrelas = document.getElementById('box-select-setas-estrelas');
+            listaSetasEstrelas.forEach(se => {
+                boxSetasEstrelas.innerHTML += `<label><input type="checkbox" class="chk-setaestrela-item" value="${se.char}" data-nome="${se.nome}" checked> ${se.char} (${se.nome})</label>`;
+            });
+
+            // Números
+            const boxNum = document.getElementById('box-select-numeros');
+            listaNumeros.forEach(n => {
+                boxNum.innerHTML += `<label><input type="checkbox" class="chk-num-item" value="${n}" checked> ${n}</label>`;
+            });
+
+            // Símbolos
+            const boxSim = document.getElementById('box-select-simbolos');
+            listaSimbolos.forEach(s => {
+                boxSim.innerHTML += `<label><input type="checkbox" class="chk-sim-item" value="${s.char}" data-nome="${s.nome}" checked> ${s.char}</label>`;
+            });
+
+            // Geometria
+            const boxGeo = document.getElementById('box-select-geometrias');
+            listaGeometrias.forEach(g => {
+                boxGeo.innerHTML += `<label><input type="checkbox" class="chk-geo-item" value="${g.char}" data-nome="${g.nome}" checked> ${g.char} (${g.nome})</label>`;
+            });
+
+            // Cores
+            const boxCor = document.getElementById('box-select-cores');
+            listaCores.forEach(c => {
+                boxCor.innerHTML += `<label><input type="checkbox" class="chk-cor-item" value="${c.hex}" data-nome="${c.nome}" checked> <span style="color:${c.hex}">■</span> ${c.nome}</label>`;
+            });
+        }
+        renderizarSeletores();
+
+        function falar(texto) {
+            if (!texto || !synth) return;
+            synth.cancel();
+            const utterThis = new SpeechSynthesisUtterance(texto);
+            utterThis.lang = 'pt-BR';
+            utterThis.rate = 1.2;
+            synth.speak(utterThis);
+        }
+
+        document.getElementById('file-picker').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                customImages = [];
+                for (let file of files) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        customImages.push(evt.target.result);
+                        document.getElementById('img-count').innerText = `${customImages.length} imagens salvas`;
+                        document.getElementById('use-img').checked = true;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+
+        function getCoresSelecionadas() {
+            const selecionadas = [];
+            document.querySelectorAll('.chk-cor-item:checked').forEach(el => {
+                selecionadas.push({ hex: el.value, nome: el.getAttribute('data-nome') });
+            });
+            return selecionadas.length > 0 ? selecionadas : listaCores;
+        }
+
+        function gerarPool() {
+            pool = [];
+            const coresAtivas = getCoresSelecionadas();
+
+            // 1. Placa Completa (Matriz)
+            if (document.getElementById('use-board').checked) {
+                const dupla = document.getElementById('dupla-board').checked;
+                const audio = document.getElementById('audio-board').checked;
+                const usePB = document.getElementById('board-style-pb').checked;
+                const useColor = document.getElementById('board-style-color').checked;
+
+                const estilosPlaca = [];
+                if (usePB) estilosPlaca.push('pb');
+                if (useColor) estilosPlaca.push('color');
+
+                if (estilosPlaca.length === 0) estilosPlaca.push('pb');
+
+                estilosPlaca.forEach(estilo => {
+                    if (dupla) {
+                        coresAtivas.forEach(c => pool.push({ type: 'board', style: estilo, color: c, audio: audio ? `${c.nome}, Placa` : null }));
+                    } else {
+                        pool.push({ type: 'board', style: estilo, audio: audio ? "Placa" : null });
+                    }
+                });
+            }
+
+            // 2. Setas Direcionais
+            if (document.getElementById('use-setas').checked) {
+                const dupla = document.getElementById('dupla-setas').checked;
+                const audio = document.getElementById('audio-setas').checked;
+                const setasSel = Array.from(document.querySelectorAll('.chk-seta-item:checked')).map(el => ({ char: el.value, nome: el.getAttribute('data-nome') }));
+
+                setasSel.forEach(s => {
+                    if (dupla) {
+                        coresAtivas.forEach(c => pool.push({ type: 'text-cor', text: s.char, color: c, audio: audio ? `${c.nome}, ${s.nome}` : null }));
+                    } else {
+                        pool.push({ type: 'text', text: s.char, audio: audio ? s.nome : null });
+                    }
+                });
+            }
+
+            // 3. Setas + Estrelas
+            if (document.getElementById('use-setas-estrelas').checked) {
+                const dupla = document.getElementById('dupla-setas-estrelas').checked;
+                const audio = document.getElementById('audio-setas-estrelas').checked;
+                const seSel = Array.from(document.querySelectorAll('.chk-setaestrela-item:checked')).map(el => ({ char: el.value, nome: el.getAttribute('data-nome') }));
+
+                seSel.forEach(s => {
+                    if (dupla) {
+                        coresAtivas.forEach(c => pool.push({ type: 'text-cor', text: s.char, color: c, audio: audio ? `${c.nome}, ${s.nome}` : null }));
+                    } else {
+                        pool.push({ type: 'text', text: s.char, audio: audio ? s.nome : null });
+                    }
+                });
+            }
+
+            // 4. Números
+            if (document.getElementById('use-num').checked) {
+                const dupla = document.getElementById('dupla-num').checked;
+                const audio = document.getElementById('audio-num').checked;
+                const numerosSel = Array.from(document.querySelectorAll('.chk-num-item:checked')).map(el => el.value);
+
+                numerosSel.forEach(n => {
+                    if (dupla) {
+                        coresAtivas.forEach(c => pool.push({ type: 'text-cor', text: n, color: c, audio: audio ? `${c.nome}, ${n}` : null }));
+                    } else {
+                        pool.push({ type: 'text', text: n, audio: audio ? n : null });
+                    }
+                });
+            }
+
+            // 5. Letras
+            if (document.getElementById('use-let').checked) {
+                const dupla = document.getElementById('dupla-let').checked;
+                const audio = document.getElementById('audio-let').checked;
+                const rawLetras = document.getElementById('custom-letras').value;
+                const letrasSel = rawLetras.split(/[\s,]+/).map(l => l.trim().toUpperCase()).filter(l => l.length > 0);
+
+                letrasSel.forEach(l => {
+                    if (dupla) {
+                        coresAtivas.forEach(c => pool.push({ type: 'text-cor', text: l, color: c, audio: audio ? `${c.nome}, Letra ${l}` : null }));
+                    } else {
+                        pool.push({ type: 'text', text: l, audio: audio ? `Letra ${l}` : null });
+                    }
+                });
+            }
+
+            // 6. Símbolos
+            if (document.getElementById('use-sim').checked) {
+                const dupla = document.getElementById('dupla-sim').checked;
+                const audio = document.getElementById('audio-sim').checked;
+                const simbolosSel = Array.from(document.querySelectorAll('.chk-sim-item:checked')).map(el => ({ char: el.value, nome: el.getAttribute('data-nome') }));
+
+                simbolosSel.forEach(s => {
+                    if (dupla) {
+                        coresAtivas.forEach(c => pool.push({ type: 'text-cor', text: s.char, color: c, audio: audio ? `${c.nome}, ${s.nome}` : null }));
+                    } else {
+                        pool.push({ type: 'text', text: s.char, audio: audio ? s.nome : null });
+                    }
+                });
+            }
+
+            // 7. Geometria
+            if (document.getElementById('use-geo').checked) {
+                const dupla = document.getElementById('dupla-geo').checked;
+                const audio = document.getElementById('audio-geo').checked;
+                const geometriasSel = Array.from(document.querySelectorAll('.chk-geo-item:checked')).map(el => ({ char: el.value, nome: el.getAttribute('data-nome') }));
+
+                geometriasSel.forEach(g => {
+                    if (dupla) {
+                        coresAtivas.forEach(c => pool.push({ type: 'text-cor', text: g.char, color: c, audio: audio ? `${c.nome}, ${g.nome}` : null }));
+                    } else {
+                        pool.push({ type: 'text', text: g.char, audio: audio ? g.nome : null });
+                    }
+                });
+            }
+
+            // 8. Cores Isoladas
+            if (document.getElementById('use-cor').checked) {
+                const audio = document.getElementById('audio-cor').checked;
+                coresAtivas.forEach(c => {
+                    pool.push({ type: 'color', color: c, audio: audio ? c.nome : null });
+                });
+            }
+
+            // 9. Imagens
+            if (document.getElementById('use-img').checked && customImages.length > 0) {
+                customImages.forEach(img => {
+                    pool.push({ type: 'image', val: img, audio: null });
+                });
+            }
+        }
+
+        function iniciarTreino() {
+            gerarPool();
+            if (pool.length === 0) {
+                alert("Por favor, ative ao menos um módulo e certifique-se de marcar/digitar os itens desejados!");
+                return;
+            }
+
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+
+            document.getElementById('screen-config').style.display = 'none';
+            document.getElementById('screen-training').style.display = 'flex';
+            
+            treinoAtivo = true;
+            proximoEstimulo();
+
+            const modo = document.querySelector('input[name="modo"]:checked').value;
+            if (modo === 'auto') {
+                const ms = parseFloat(document.getElementById('intervalo').value) * 1000;
+                autoTimer = setInterval(proximoEstimulo, ms);
+            }
+
+            const tempoTotalMs = parseInt(document.getElementById('tempo-total').value) * 1000;
+            totalTimer = setTimeout(encerrarTreino, tempoTotalMs);
+        }
+
+        function proximoEstimulo() {
+            if (!treinoAtivo) return;
+
+            const item = pool[Math.floor(Math.random() * pool.length)];
+            const screen = document.getElementById('screen-training');
+            const textEl = document.getElementById('stimulus-text');
+            const imgEl = document.getElementById('stimulus-img');
+            const boardEl = document.getElementById('stimulus-board');
+            const gridContainer = document.getElementById('grid-container');
+
+            // Reset visibilidade
+            screen.style.backgroundColor = '#000000';
+            textEl.style.display = 'none';
+            imgEl.style.display = 'none';
+            boardEl.style.display = 'none';
+            textEl.style.color = '#ffffff';
+
+            if (item.type === 'text') {
+                textEl.innerText = item.text;
+                textEl.style.display = 'block';
+            } else if (item.type === 'text-cor') {
+                screen.style.backgroundColor = item.color.hex;
+                textEl.innerText = item.text;
+                textEl.style.display = 'block';
+            } else if (item.type === 'color') {
+                screen.style.backgroundColor = item.color.hex;
+            } else if (item.type === 'image') {
+                imgEl.src = item.val;
+                imgEl.style.display = 'block';
+            } else if (item.type === 'board') {
+                if (item.color) {
+                    screen.style.backgroundColor = item.color.hex;
+                }
+                
+                gridContainer.innerHTML = '';
+                for (let r = 0; r < matrizPlacaOriginal.length; r++) {
+                    for (let c = 0; c < matrizPlacaOriginal[r].length; c++) {
+                        const cell = document.createElement('div');
+                        cell.innerText = matrizPlacaOriginal[r][c];
+
+                        if (item.style === 'color') {
+                            cell.style.color = matrizCoresFixas[r][c];
+                        } else {
+                            cell.style.color = '#000000';
+                        }
+                        gridContainer.appendChild(cell);
+                    }
+                }
+
+                boardEl.style.display = 'block';
+            }
+
+            if (item.audio) {
+                falar(item.audio);
+            }
+        }
+
+        function encerrarTreino() {
+            treinoAtivo = false;
+            clearInterval(autoTimer);
+            clearTimeout(totalTimer);
+
+            if (synth) synth.cancel();
+
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+
+            document.getElementById('screen-training').style.display = 'none';
+            document.getElementById('screen-config').style.display = 'flex';
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (!treinoAtivo) return;
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                proximoEstimulo();
+            } else if (e.code === 'Escape') {
+                encerrarTreino();
+            }
+        });
+    </script>
+</body>
+</html>
