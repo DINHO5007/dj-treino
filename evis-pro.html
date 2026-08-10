@@ -16,7 +16,7 @@
     }
     .container {
       background: #ffffff;
-      max-width: 650px;
+      max-width: 700px;
       width: 100%;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -37,7 +37,7 @@
     
     .form-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
-    input[type="text"], input[type="email"], input[type="tel"], select {
+    input[type="text"], input[type="email"], input[type="tel"] {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
@@ -52,7 +52,7 @@
       padding: 15px;
       margin-bottom: 12px;
     }
-    .question-item p { font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+    .question-item p { font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #2c3e50; }
     .options { display: flex; gap: 15px; flex-wrap: wrap; }
     .options label { font-weight: normal; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 5px; }
     
@@ -105,10 +105,10 @@
         <input type="tel" id="telefone" required placeholder="(79) 99999-9999">
       </div>
 
-      <div class="section-title">2. Avaliação de Sintomas Inflamatórios</div>
+      <div class="section-title">2. Avaliação de Sintomas Inflamatórios (20 Perguntas)</div>
       <p style="font-size: 12px; color: #777; margin-bottom: 15px;">Avalie a frequência dos sintomas abaixo nas últimas semanas:</p>
 
-      <!-- Perguntas do EVIS -->
+      <!-- Perguntas do EVIS 1 a 20 -->
       <div class="question-item">
         <p>1. Dores articulares ou musculares frequentes?</p>
         <div class="options">
@@ -154,12 +154,147 @@
         </div>
       </div>
 
+      <div class="question-item">
+        <p>6. Dores de cabeça frequentes ou sensação de pressão ocular?</p>
+        <div class="options">
+          <label><input type="radio" name="q6" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q6" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q6" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>7. Alterações na pele (acne, eczema, vermelhidão ou coceira sem causa clara)?</p>
+        <div class="options">
+          <label><input type="radio" name="q7" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q7" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q7" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>8. Sonolência após as refeições ou quedas bruscas de energia?</p>
+        <div class="options">
+          <label><input type="radio" name="q8" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q8" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q8" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>9. Compulsão por doces ou carboidratos refinados?</p>
+        <div class="options">
+          <label><input type="radio" name="q9" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q9" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q9" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>10. Dificuldade para perder peso mesmo com dieta e exercícios?</p>
+        <div class="options">
+          <label><input type="radio" name="q10" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q10" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q10" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>11. Alteração na frequência intestinal (constipação ou fezes amolecidas)?</p>
+        <div class="options">
+          <label><input type="radio" name="q11" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q11" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q11" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>12. Rigidez articular matinal ou dificuldade inicial para se movimentar?</p>
+        <div class="options">
+          <label><input type="radio" name="q12" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q12" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q12" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>13. Alergias respiratórias frequentes, rinite ou congestão nasal?</p>
+        <div class="options">
+          <label><input type="radio" name="q13" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q13" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q13" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>14. Irritabilidade, oscilações bruscas de humor ou ansiedade?</p>
+        <div class="options">
+          <label><input type="radio" name="q14" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q14" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q14" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>15. Sensibilidade aumentada a cheiros, ruídos ou luz forte?</p>
+        <div class="options">
+          <label><input type="radio" name="q15" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q15" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q15" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>16. Qualidade de sono ruim, despertares noturnos ou insônia?</p>
+        <div class="options">
+          <label><input type="radio" name="q16" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q16" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q16" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>17. Olheiras pronunciadas ou sensação constante de olhos pesados?</p>
+        <div class="options">
+          <label><input type="radio" name="q17" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q17" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q17" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>18. Aftas frequentes ou sensibilidade gengival/bucal?</p>
+        <div class="options">
+          <label><input type="radio" name="q18" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q18" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q18" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>19. Queda de cabelo excessiva ou unhas fracas e quebradiças?</p>
+        <div class="options">
+          <label><input type="radio" name="q19" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q19" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q19" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>20. Recuperação física demorada após esforços físicos habituais?</p>
+        <div class="options">
+          <label><input type="radio" name="q20" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q20" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q20" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
       <button type="button" class="btn-submit" onclick="calcularEvis()">Calcular Resultado</button>
     </form>
 
     <div id="resultArea">
-      <h3>Pontuação EVIS:</h3>
-      <div class="result-score" id="scoreVal">0</div>
+      <h3>Pontuação EVIS PRO:</h3>
+      <div class="result-score" id="scoreVal">0 / 40</div>
       <p id="statusTxt"></p>
     </div>
   </div>
@@ -168,32 +303,34 @@
     function calcularEvis() {
       const form = document.getElementById('evisForm');
       if (!form.checkValidity()) {
-        alert('Por favor, preencha todos os campos e perguntas.');
+        alert('Por favor, preencha seus dados e responda a todas as 20 perguntas.');
         return;
       }
 
       let total = 0;
-      for (let i = 1; i <= 5; i++) {
-        const val = document.querySelector(`input[name="q${i}"]:checked`).value;
-        total += parseInt(val);
+      for (let i = 1; i <= 20; i++) {
+        const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selectedOption) {
+          total += parseInt(selectedOption.value);
+        }
       }
 
       const resultArea = document.getElementById('resultArea');
       const scoreVal = document.getElementById('scoreVal');
       const statusTxt = document.getElementById('statusTxt');
 
-      scoreVal.innerText = total + " pts";
+      scoreVal.innerText = total + " / 40 pts";
       resultArea.style.display = 'block';
 
-      if (total <= 2) {
+      if (total <= 10) {
         resultArea.className = 'status-baixo';
-        statusTxt.innerHTML = '<strong>Baixo Nível Inflamatório</strong><br>Sintomas mínimos detectados.';
-      } else if (total <= 5) {
+        statusTxt.innerHTML = '<strong>Baixo Nível Inflamatório</strong><br>Sintomas mínimos detectados no quadro geral.';
+      } else if (total <= 22) {
         resultArea.className = 'status-medio';
-        statusTxt.innerHTML = '<strong>Médio Nível Inflamatório</strong><br>Sinais moderados de alerta sistêmico.';
+        statusTxt.innerHTML = '<strong>Médio Nível Inflamatório</strong><br>Sinais moderados de alerta inflamatório sistêmico.';
       } else {
         resultArea.className = 'status-alto';
-        statusTxt.innerHTML = '<strong>Alto Nível Inflamatório</strong><br>Recomenda-se avaliação detalhada de estilo de vida e clínica.';
+        statusTxt.innerHTML = '<strong>Alto Nível Inflamatório</strong><br>Indicador elevado de inflamação de baixo grau. Recomenda-se acompanhamento específico.';
       }
 
       resultArea.scrollIntoView({ behavior: 'smooth' });
