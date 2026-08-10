@@ -105,10 +105,10 @@
         <input type="tel" id="telefone" required placeholder="(79) 99999-9999">
       </div>
 
-      <div class="section-title">2. Avaliação de Sintomas Inflamatórios (20 Perguntas)</div>
+      <div class="section-title">2. Avaliação de Sintomas Inflamatórios (25 Perguntas)</div>
       <p style="font-size: 12px; color: #777; margin-bottom: 15px;">Avalie a frequência dos sintomas abaixo nas últimas semanas:</p>
 
-      <!-- Perguntas do EVIS 1 a 20 -->
+      <!-- Perguntas 1 a 25 -->
       <div class="question-item">
         <p>1. Dores articulares ou musculares frequentes?</p>
         <div class="options">
@@ -289,12 +289,57 @@
         </div>
       </div>
 
+      <div class="question-item">
+        <p>21. Sensação recorrente de pés ou mãos frias/formigamento?</p>
+        <div class="options">
+          <label><input type="radio" name="q21" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q21" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q21" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>22. Halitose (mau hálito) ou gosto amargo na boca ao acordar?</p>
+        <div class="options">
+          <label><input type="radio" name="q22" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q22" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q22" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>23. Suores noturnos desalinhados com a temperatura ambiente?</p>
+        <div class="options">
+          <label><input type="radio" name="q23" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q23" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q23" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>24. Sensação de azia ou queimação retroesternal recorrente?</p>
+        <div class="options">
+          <label><input type="radio" name="q24" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q24" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q24" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
+      <div class="question-item">
+        <p>25. Sensibilidade articular decorrente de mudanças bruscas de clima?</p>
+        <div class="options">
+          <label><input type="radio" name="q25" value="0" required> Nunca / Raro (0)</label>
+          <label><input type="radio" name="q25" value="1"> Às vezes (1)</label>
+          <label><input type="radio" name="q25" value="2"> Frequente (2)</label>
+        </div>
+      </div>
+
       <button type="button" class="btn-submit" onclick="calcularEvis()">Calcular Resultado</button>
     </form>
 
     <div id="resultArea">
       <h3>Pontuação EVIS PRO:</h3>
-      <div class="result-score" id="scoreVal">0 / 40</div>
+      <div class="result-score" id="scoreVal">0 / 50</div>
       <p id="statusTxt"></p>
     </div>
   </div>
@@ -303,12 +348,12 @@
     function calcularEvis() {
       const form = document.getElementById('evisForm');
       if (!form.checkValidity()) {
-        alert('Por favor, preencha seus dados e responda a todas as 20 perguntas.');
+        alert('Por favor, preencha seus dados e responda a todas as 25 perguntas.');
         return;
       }
 
       let total = 0;
-      for (let i = 1; i <= 20; i++) {
+      for (let i = 1; i <= 25; i++) {
         const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
         if (selectedOption) {
           total += parseInt(selectedOption.value);
@@ -319,13 +364,13 @@
       const scoreVal = document.getElementById('scoreVal');
       const statusTxt = document.getElementById('statusTxt');
 
-      scoreVal.innerText = total + " / 40 pts";
+      scoreVal.innerText = total + " / 50 pts";
       resultArea.style.display = 'block';
 
-      if (total <= 10) {
+      if (total <= 12) {
         resultArea.className = 'status-baixo';
         statusTxt.innerHTML = '<strong>Baixo Nível Inflamatório</strong><br>Sintomas mínimos detectados no quadro geral.';
-      } else if (total <= 22) {
+      } else if (total <= 27) {
         resultArea.className = 'status-medio';
         statusTxt.innerHTML = '<strong>Médio Nível Inflamatório</strong><br>Sinais moderados de alerta inflamatório sistêmico.';
       } else {
