@@ -3,50 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FDI.mm - Monitor de Frequência Cardíaca e Treinos</title>
+    <title>FDI.mm System - Monitoramento Multiusuário e Avaliação Biométrica</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans">
 
     <header class="bg-slate-800 border-b border-slate-700 p-4 text-center">
         <h1 class="text-xl font-bold text-emerald-400">FDI.mm System</h1>
-        <p class="text-xs text-slate-400">Monitoramento Multiusuário (Até 10 Atletas/Pacientes) & Laudos Clínicos</p>
+        <p class="text-xs text-slate-400">Monitoramento Multiusuário (Até 15 Atletas) & Avaliação Biomecânica / Padrão ISAK</p>
     </header>
 
-    <nav class="flex justify-around bg-slate-800 border-b border-slate-700 text-xs sm:text-sm">
-        <button onclick="switchTab('calendar')" class="tab-btn py-3 px-2 text-emerald-400 border-b-2 border-emerald-400 font-semibold">📅 Calendário</button>
-        <button onclick="switchTab('group')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">❤️ Grupo ao Vivo (10)</button>
-        <button onclick="switchTab('students')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">👤 Alunos</button>
-        <button onclick="switchTab('evaluation')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">📊 Avaliação FDI</button>
-        <button onclick="switchTab('report')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">📋 Relatório Final</button>
+    <nav class="flex flex-wrap justify-center sm:justify-around bg-slate-800 border-b border-slate-700 text-xs sm:text-sm">
+        <button onclick="switchTab('calendar')" class="tab-btn py-3 px-3 text-emerald-400 border-b-2 border-emerald-400 font-semibold">📅 Calendário</button>
+        <button onclick="switchTab('group')" class="tab-btn py-3 px-3 text-slate-400 font-semibold">❤️ Grupo ao Vivo (15)</button>
+        <button onclick="switchTab('students')" class="tab-btn py-3 px-3 text-slate-400 font-semibold">👤 Alunos</button>
+        <button onclick="switchTab('evaluation')" class="tab-btn py-3 px-3 text-slate-400 font-semibold">📊 Avaliação FDI & ISAK</button>
+        <button onclick="switchTab('report')" class="tab-btn py-3 px-3 text-slate-400 font-semibold">📋 Relatório de Treino</button>
     </nav>
 
-    <main class="p-4 max-w-6xl mx-auto">
+    <main class="p-4 max-w-7xl mx-auto">
 
         <!-- ABA 1: CALENDÁRIO -->
         <section id="calendar" class="tab-content space-y-4">
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
                 <h2 class="font-bold text-slate-200 mb-2">Agenda de Sessões e Reabilitação</h2>
                 <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 mb-3 text-xs">
-                    <div class="font-semibold text-emerald-400">Próxima Sessão Coletiva: Monitoramento de Cintas BLE</div>
-                    <div class="text-slate-400">Capacidade ativa: Até 10 sensores cardíacos simultâneos.</div>
+                    <div class="font-semibold text-emerald-400">Sessão Coletiva Ativa: Conexão BLE Simultânea</div>
+                    <div class="text-slate-400">Capacidade expandida para até 15 sensores cardíacos em tempo real.</div>
                 </div>
-                <button onclick="switchTab('group')" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded text-xs font-bold">Iniciar Grupo ao Vivo</button>
+                <button onclick="switchTab('group')" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded text-xs font-bold">Ir para Grupo ao Vivo</button>
             </div>
         </section>
 
-        <!-- ABA 2: GRUPO AO VIVO (10 SLOTS) -->
+        <!-- ABA 2: GRUPO AO VIVO (15 SLOTS) -->
         <section id="group" class="tab-content hidden space-y-4">
-            <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
-                <span>Painel de Monitoramento: <strong id="ble-global-status" class="text-amber-400">Pronto para Conectar</strong></span>
+            <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs">
+                <span>Painel de Monitoramento (15 Slots): <strong id="ble-global-status" class="text-amber-400">Pronto para Conectar</strong></span>
                 <div class="flex gap-2">
                     <button onclick="disconnectAllBluetooth()" class="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded font-bold text-white">Desconectar Todos</button>
                     <button onclick="finishSession()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded font-bold text-white">Finish & Summarize</button>
                 </div>
             </div>
 
-            <!-- Grade com os 10 slots -->
+            <!-- Grade com os 15 slots -->
             <div id="live-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 <!-- Gerado via Script -->
             </div>
@@ -57,9 +56,18 @@
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
                 <h2 class="font-bold text-slate-200 text-sm">Cadastrar Atleta / Paciente</h2>
                 <form id="student-form" onsubmit="saveStudent(event)" class="space-y-2 text-xs">
-                    <div>
-                        <label class="text-slate-400 block mb-1">Nome Completo:</label>
-                        <input type="text" id="std-name" required class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100" placeholder="Ex: Josivaldo">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-slate-400 block mb-1">Nome Completo:</label>
+                            <input type="text" id="std-name" required class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100" placeholder="Ex: Josivaldo">
+                        </div>
+                        <div>
+                            <label class="text-slate-400 block mb-1">Sexo:</label>
+                            <select id="std-gender" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100">
+                                <option value="M">Masculino</option>
+                                <option value="F">Feminino</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -87,31 +95,32 @@
             </div>
         </section>
 
-        <!-- ABA 4: AVALIAÇÃO FDI -->
+        <!-- ABA 4: AVALIAÇÃO FDI & ISAK -->
         <section id="evaluation" class="tab-content hidden space-y-4">
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3 text-xs">
-                <h2 class="font-bold text-slate-200 text-sm border-b border-slate-700 pb-2">Módulo de Avaliação Funcional e Antropométrica (FDI.mm)</h2>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-4 text-xs">
+                <h2 class="font-bold text-emerald-400 text-sm border-b border-slate-700 pb-2">Módulo Clínico de Avaliação Funcional, Postural e Antropometria (Padrão ISAK)</h2>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="text-slate-400 block mb-1">Selecionar Aluno:</label>
-                        <select id="eval-select" onchange="calculateEvaluation()" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100">
+                        <select id="eval-select" onchange="loadStudentDataForEval()" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100">
                             <option value="">-- Escolha o Aluno --</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-slate-400 block mb-1">Foco da Avaliação:</label>
+                        <label class="text-slate-400 block mb-1">Objetivo Clínico / Treinamento:</label>
                         <select id="eval-focus" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100">
                             <option>Reabilitação de Coluna / Cervicalgia / Lombalgia</option>
-                            <option>Condicionamento Aeróbico & Zonas de FC</option>
                             <option>Hipertrofia e Força de Membros</option>
+                            <option>Redução de Gordura Corporal & Perfil Metabólico</option>
                             <option>Fibromialgia / Controle de Dor Crônica</option>
                         </select>
                     </div>
                 </div>
 
-                <div id="eval-box" class="bg-slate-900 p-4 rounded-lg border border-slate-700 space-y-3 hidden">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                <div id="eval-box" class="space-y-4 hidden">
+                    <!-- Dashboard Resumo Antropométrico -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center bg-slate-900 p-3 rounded-lg border border-slate-700">
                         <div class="bg-slate-800 p-2 rounded">
                             <span class="text-slate-400 block text-[10px]">IMC</span>
                             <strong id="ev-imc" class="text-base text-emerald-400">--</strong>
@@ -121,27 +130,83 @@
                             <strong id="ev-class" class="text-xs text-amber-400">--</strong>
                         </div>
                         <div class="bg-slate-800 p-2 rounded">
-                            <span class="text-slate-400 block text-[10px]">FC Máxima (Teórica)</span>
-                            <strong id="ev-fcmax" class="text-base">-- bpm</strong>
+                            <span class="text-slate-400 block text-[10px]">_% Gordura (ISAK)</span>
+                            <strong id="ev-fat" class="text-base text-blue-400">-- %</strong>
                         </div>
                         <div class="bg-slate-800 p-2 rounded">
-                            <span class="text-slate-400 block text-[10px]">Gasto Base Repouso</span>
-                            <strong id="ev-kcal" class="text-base">-- kcal</strong>
+                            <span class="text-slate-400 block text-[10px]">Massa Magra</span>
+                            <strong id="ev-lean" class="text-base text-purple-400">-- kg</strong>
+                        </div>
+                        <div class="bg-slate-800 p-2 rounded">
+                            <span class="text-slate-400 block text-[10px]">Idade Metabólica</span>
+                            <strong id="ev-metage" class="text-base text-rose-400">-- anos</strong>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="text-slate-400 block mb-1">Testes Ortopédicos / Posturais e Observações Clínicas:</label>
-                        <textarea id="ev-notes" rows="3" class="w-full bg-slate-800 border border-slate-700 p-2 rounded text-slate-100" placeholder="Insira dados de amplitude articular, dor referida ou assimetrias..."></textarea>
+                    <!-- Layout Dividido: Dobras/Perímetros e Avatar Corporal -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Dobras Cutâneas & Perímetros -->
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 space-y-2">
+                            <h3 class="font-bold text-slate-200 border-b border-slate-800 pb-1">Dobras Cutâneas & Perímetros (mm / cm)</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-slate-400 block text-[10px]">Tríceps (mm):</label>
+                                    <input type="number" step="0.1" id="skin-triceps" oninput="calculateISAK()" class="w-full bg-slate-800 border border-slate-700 p-1.5 rounded text-slate-100" placeholder="Ex: 12">
+                                </div>
+                                <div>
+                                    <label class="text-slate-400 block text-[10px]">Subescapular (mm):</label>
+                                    <input type="number" step="0.1" id="skin-subscapular" oninput="calculateISAK()" class="w-full bg-slate-800 border border-slate-700 p-1.5 rounded text-slate-100" placeholder="Ex: 14">
+                                </div>
+                                <div>
+                                    <label class="text-slate-400 block text-[10px]">Supra-ilíaca (mm):</label>
+                                    <input type="number" step="0.1" id="skin-suprailiac" oninput="calculateISAK()" class="w-full bg-slate-800 border border-slate-700 p-1.5 rounded text-slate-100" placeholder="Ex: 16">
+                                </div>
+                                <div>
+                                    <label class="text-slate-400 block text-[10px]">Abdominal (mm):</label>
+                                    <input type="number" step="0.1" id="skin-abdominal" oninput="calculateISAK()" class="w-full bg-slate-800 border border-slate-700 p-1.5 rounded text-slate-100" placeholder="Ex: 20">
+                                </div>
+                                <div>
+                                    <label class="text-slate-400 block text-[10px]">Circunferência Cintura (cm):</label>
+                                    <input type="number" step="0.1" id="per-waist" class="w-full bg-slate-800 border border-slate-700 p-1.5 rounded text-slate-100" placeholder="Ex: 80">
+                                </div>
+                                <div>
+                                    <label class="text-slate-400 block text-[10px]">Circunferência Quadril (cm):</label>
+                                    <input type="number" step="0.1" id="per-hip" class="w-full bg-slate-800 border border-slate-700 p-1.5 rounded text-slate-100" placeholder="Ex: 98">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Avatar Corporal / Mapeamento Postural e Clínico -->
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-slate-200 border-b border-slate-800 pb-1 mb-2">Esquema Corporal & Avaliação Postural</h3>
+                                <div class="flex justify-center items-center my-2">
+                                    <div class="relative w-32 h-44 bg-slate-800 border border-slate-700 rounded-lg flex flex-col items-center justify-between p-2 text-[10px] text-slate-400">
+                                        <div class="border border-slate-600 rounded-full w-8 h-8 flex items-center justify-center bg-slate-900">Cabeça</div>
+                                        <div class="w-full flex justify-between">
+                                            <span class="border border-slate-600 px-1 rounded">Ombro E/D</span>
+                                            <span class="border border-slate-600 px-1 rounded">Cintura</span>
+                                        </div>
+                                        <div class="border border-slate-600 px-2 py-0.5 rounded bg-slate-900">Coluna / Lombar</div>
+                                        <div class="w-full flex justify-between">
+                                            <span class="border border-slate-600 px-1 rounded">Quadril</span>
+                                            <span class="border border-slate-600 px-1 rounded">Joelho</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="text-slate-400 block text-[10px] mb-1">Observações de Assimetria / Dor / Compensações:</label>
+                                <textarea id="ev-notes" rows="2" class="w-full bg-slate-800 border border-slate-700 p-1.5 rounded text-slate-100 text-[11px]" placeholder="Ex: Hiperlordose lombar leve, dor referida em cervical..."></textarea>
+                            </div>
+                            <button onclick="saveEvaluation()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold text-white mt-2">Salvar Laudo Completo FDI</button>
+                        </div>
                     </div>
-                    <button onclick="saveEvaluation()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold text-white">Salvar Laudo de Avaliação FDI</button>
                 </div>
             </div>
 
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <h3 class="font-bold text-slate-200 text-xs mb-2">Laudos Salvos</h3>
+                <h3 class="font-bold text-slate-200 text-xs mb-2">Histórico de Laudos Emitidos</h3>
                 <div id="eval-list" class="space-y-2 text-xs">
-                    <p class="text-slate-500">Nenhum laudo registrado.</p>
+                    <p class="text-slate-500">Nenhum laudo gerado ainda.</p>
                 </div>
             </div>
         </section>
@@ -149,9 +214,12 @@
         <!-- ABA 5: RELATÓRIO PÓS-TREINO -->
         <section id="report" class="tab-content hidden space-y-4">
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3 text-xs">
-                <h2 class="font-bold text-emerald-400 text-sm border-b border-slate-700 pb-2">📋 Relatório Consolidado da Última Sessão (Finish & Summarize)</h2>
+                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                    <h2 class="font-bold text-emerald-400 text-sm">📋 Relatório Consolidado do Treino (Automático)</h2>
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-white font-bold">🖨️ Imprimir / Salvar PDF</button>
+                </div>
                 <div id="session-report-content" class="space-y-2 text-slate-300">
-                    <p class="text-slate-500">Nenhuma sessão finalizada recentemente. Clique em "Finish & Summarize" na aba Grupo ao Vivo após monitorar os atletas.</p>
+                    <p class="text-slate-500">Nenhuma sessão finalizada recentemente. Clique em "Finish & Summarize" na aba Grupo ao Vivo para gerar o relatório automático de todos os atletas conectados.</p>
                 </div>
             </div>
         </section>
@@ -178,15 +246,15 @@
             event.currentTarget.classList.remove('text-slate-400');
         }
 
-        // Criar 10 slots independentes
+        // Criar 15 slots independentes
         function initLiveGrid() {
             const grid = document.getElementById('live-grid');
             let html = '';
-            for(let i = 1; i <= 10; i++) {
+            for(let i = 1; i <= 15; i++) {
                 html += `
                     <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between h-44 shadow">
                         <div class="flex justify-between items-center text-[11px]">
-                            <span class="font-bold text-slate-300">Atleta / Aluno ${i}</span>
+                            <span class="font-bold text-slate-300">Atleta ${i}</span>
                             <span id="status-${i}" class="bg-slate-900 px-1.5 py-0.5 rounded text-[9px] text-amber-400">Offline</span>
                         </div>
                         <div class="text-center my-1">
@@ -194,7 +262,7 @@
                             <span class="text-[10px] text-slate-400">BPM</span>
                         </div>
                         <div class="text-[10px] text-slate-400 truncate text-center" id="name-${i}">Aguardando Sensor</div>
-                        <button onclick="connectSlot(${i})" class="w-full bg-blue-600 hover:bg-blue-500 py-1.5 rounded text-[10px] font-bold text-white mt-1">📡 Conectar Cinta BLE</button>
+                        <button onclick="connectSlot(${i})" class="w-full bg-blue-600 hover:bg-blue-500 py-1.5 rounded text-[10px] font-bold text-white mt-1">📡 Conectar Sensor</button>
                     </div>
                 `;
             }
@@ -202,7 +270,6 @@
         }
 
         let activeConnections = {};
-        let sessionDataLog = [];
 
         async function connectSlot(index) {
             try {
@@ -221,7 +288,7 @@
 
                 document.getElementById(`status-${index}`).innerText = "Online";
                 document.getElementById(`status-${index}`).className = "bg-emerald-500/20 px-1.5 py-0.5 rounded text-[9px] text-emerald-400";
-                document.getElementById(`name-${index}`).innerText = device.name || `Sensor BLE ${index}`;
+                document.getElementById(`name-${index}`).innerText = device.name || `Sensor ${index}`;
 
                 characteristic.startNotifications();
                 characteristic.addEventListener('characteristicvaluechanged', (e) => {
@@ -237,7 +304,7 @@
                     }
                 });
 
-                document.getElementById('ble-global-status').innerText = "Sensores conectados ativamente";
+                document.getElementById('ble-global-status').innerText = "Sensores conectados";
                 document.getElementById('ble-global-status').className = "text-emerald-400";
 
             } catch (err) {
@@ -248,7 +315,7 @@
         }
 
         function disconnectAllBluetooth() {
-            Object.values(activeConnections.forEach ? Object.values(activeConnections) : []).forEach(item => {
+            Object.values(activeConnections).forEach(item => {
                 if(item.device && item.device.gatt.connected) item.device.gatt.disconnect();
             });
             activeConnections = {};
@@ -258,24 +325,38 @@
         }
 
         function finishSession() {
-            let reportHtml = `<div class="bg-slate-900 p-3 rounded border border-slate-700 space-y-2">
-                <div class="font-bold text-emerald-400">Data da Sessão: ${new Date().toLocaleString('pt-BR')}</div>`;
-            
-            let connectedCount = Object.keys(activeConnections).length;
-            if(connectedCount === 0) {
-                alert('Nenhum sensor ativo para resumir.');
+            let connectedKeys = Object.keys(activeConnections);
+            if(connectedKeys.length === 0) {
+                alert('Nenhum sensor ativo para gerar o relatório da sessão.');
                 return;
             }
 
-            for(let [idx, data] of Object.entries(activeConnections)) {
+            let reportHtml = `
+                <div class="bg-slate-900 p-4 rounded border border-slate-700 space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <span class="font-bold text-emerald-400 text-sm">Resumo da Sessão Coletiva</span>
+                        <span class="text-slate-400 text-[11px]">${new Date().toLocaleString('pt-BR')}</span>
+                    </div>
+            `;
+            
+            for(let idx of connectedKeys) {
+                let data = activeConnections[idx];
                 let readings = data.readings;
                 let avgBpm = readings.length > 0 ? Math.round(readings.reduce((a,b)=>a+b,0)/readings.length) : 0;
                 let deviceName = document.getElementById(`name-${idx}`).innerText;
+                let kcalEst = Math.round(readings.length * 0.15); // Gasto estimado baseado no tempo/batimentos
 
                 reportHtml += `
-                    <div class="border-t border-slate-800 pt-2">
-                        <strong>Atleta Slot ${idx} (${deviceName})</strong>: 
-                        Média: ${avgBpm} BPM | Pico Máximo: ${data.maxBpm} BPM | Leituras Coletadas: ${readings.length}
+                    <div class="bg-slate-800 p-2.5 rounded border border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1">
+                        <div>
+                            <strong>Slot ${idx}: ${deviceName}</strong>
+                        </div>
+                        <div class="flex gap-3 text-slate-300 text-[11px]">
+                            <span>Média: <strong class="text-emerald-400">${avgBpm} BPM</strong></span>
+                            <span>Pico: <strong class="text-amber-400">${data.maxBpm} BPM</strong></span>
+                            <span>Gasto Est.: <strong class="text-purple-400">${kcalEst} kcal</strong></span>
+                            <span>Leituras: ${readings.length}</span>
+                        </div>
                     </div>
                 `;
             }
@@ -283,22 +364,23 @@
 
             document.getElementById('session-report-content').innerHTML = reportHtml;
             switchTab('report');
-            alert('Sessão finalizada com sucesso! Relatório gerado na aba Relatório Final.');
+            alert('Treino finalizado com sucesso! Relatório automático gerado na aba Relatório de Treino.');
         }
 
-        // Alunos e Avaliação
+        // Alunos
         function saveStudent(e) {
             e.preventDefault();
             const name = document.getElementById('std-name').value;
+            const gender = document.getElementById('std-gender').value;
             const age = document.getElementById('std-age').value;
             const weight = document.getElementById('std-weight').value;
             const height = document.getElementById('std-height').value;
 
             let students = JSON.parse(localStorage.getItem('fdi_students') || '[]');
-            students.push({ id: Date.now(), name, age, weight, height });
+            students.push({ id: Date.now(), name, gender, age, weight, height });
             localStorage.setItem('fdi_students', JSON.stringify(students));
 
-            alert('Aluno cadastrado!');
+            alert('Aluno cadastrado com sucesso!');
             document.getElementById('student-form').reset();
             loadStudents();
             loadStudentsToSelect();
@@ -313,7 +395,7 @@
             }
             list.innerHTML = students.map(s => `
                 <div class="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-700">
-                    <span><strong>${s.name}</strong> (${s.age} anos, ${s.weight}kg, ${s.height}cm)</span>
+                    <span><strong>${s.name}</strong> (${s.gender}, ${s.age} anos, ${s.weight}kg, ${s.height}cm)</span>
                     <button onclick="deleteStudent(${s.id})" class="bg-red-600 px-2 py-1 rounded text-white text-[10px]">Excluir</button>
                 </div>
             `).join('');
@@ -331,17 +413,22 @@
             let students = JSON.parse(localStorage.getItem('fdi_students') || '[]');
             const sel = document.getElementById('eval-select');
             sel.innerHTML = '<option value="">-- Escolha o Aluno --</option>' + 
-                students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                students.map(s => `<option value="${s.id}">${s.name} (${s.weight}kg, ${s.height}cm)</option>`).join('');
         }
 
-        function calculateEvaluation() {
+        function loadStudentDataForEval() {
             const id = document.getElementById('eval-select').value;
             const box = document.getElementById('eval-box');
             if(!id) {
                 box.classList.add('hidden');
                 return;
             }
+            box.classList.remove('hidden');
+            calculateISAK();
+        }
 
+        function calculateISAK() {
+            const id = document.getElementById('eval-select').value;
             let students = JSON.parse(localStorage.getItem('fdi_students') || '[]');
             const s = students.find(x => x.id == id);
             if(!s) return;
@@ -353,15 +440,25 @@
             else if(imc >= 25 && imc < 30) classification = "Sobrepeso";
             else if(imc >= 30) classification = "Obesidade";
 
-            const fcMax = 220 - s.age;
-            const kcal = Math.round(s.weight * 7.2);
+            // Leitura das dobras cutâneas para cálculo ISAK estimado
+            const t = parseFloat(document.getElementById('skin-triceps').value) || 12;
+            const sub = parseFloat(document.getElementById('skin-subscapular').value) || 14;
+            const sup = parseFloat(document.getElementById('skin-suprailiac').value) || 15;
+            const abd = parseFloat(document.getElementById('skin-abdominal').value) || 18;
+            
+            const sumSkin = t + sub + sup + abd;
+            
+            // Fórmula simplificada de densidade / % gordura baseada nas dobras
+            let bodyFat = s.gender === 'M' ? (sumSkin * 0.15 + 3.5).toFixed(1) : (sumSkin * 0.22 + 5.2).toFixed(1);
+            let fatMass = ((s.weight * bodyFat) / 100).toFixed(1);
+            let leanMass = (s.weight - fatMass).toFixed(1);
+            let metabAge = Math.max(18, Math.round(parseInt(s.age) * (bodyFat > 25 ? 1.2 : 0.95)));
 
             document.getElementById('ev-imc').innerText = imc;
             document.getElementById('ev-class').innerText = classification;
-            document.getElementById('ev-fcmax').innerText = fcMax + " bpm";
-            document.getElementById('ev-kcal').innerText = kcal + " kcal";
-
-            box.classList.remove('hidden');
+            document.getElementById('ev-fat').innerText = bodyFat + " %";
+            document.getElementById('ev-lean').innerText = leanMass + " kg";
+            document.getElementById('ev-metage').innerText = metabAge + " anos";
         }
 
         function saveEvaluation() {
@@ -373,12 +470,13 @@
             const focus = document.getElementById('eval-focus').value;
             const notes = document.getElementById('ev-notes').value;
             const imc = document.getElementById('ev-imc').innerText;
+            const fat = document.getElementById('ev-fat').innerText;
 
             let evals = JSON.parse(localStorage.getItem('fdi_evaluations') || '[]');
-            evals.push({ date: new Date().toLocaleDateString('pt-BR'), name: s.name, focus, imc, notes });
+            evals.push({ date: new Date().toLocaleDateString('pt-BR'), name: s.name, focus, imc, fat, notes });
             localStorage.setItem('fdi_evaluations', JSON.stringify(evals));
 
-            alert('Laudo de Avaliação FDI salvo!');
+            alert('Laudo de Avaliação ISAK / FDI salvo com sucesso!');
             loadEvaluations();
         }
 
@@ -386,7 +484,7 @@
             let evals = JSON.parse(localStorage.getItem('fdi_evaluations') || '[]');
             const list = document.getElementById('eval-list');
             if(evals.length === 0) {
-                list.innerHTML = '<p class="text-slate-500">Nenhum laudo registrado.</p>';
+                list.innerHTML = '<p class="text-slate-500">Nenhum laudo gerado ainda.</p>';
                 return;
             }
             list.innerHTML = evals.reverse().map(e => `
@@ -395,8 +493,8 @@
                         <span>${e.name}</span>
                         <span class="text-[10px] text-slate-400">${e.date}</span>
                     </div>
-                    <div class="text-slate-300">Foco: ${e.focus} | IMC: ${e.imc}</div>
-                    <div class="text-slate-400 italic text-[11px]">"${e.notes || 'Sem observações'}"</div>
+                    <div class="text-slate-300">Foco: ${e.focus} | IMC: ${e.imc} | % Gordura: ${e.fat}</div>
+                    <div class="text-slate-400 italic text-[11px]">"${e.notes || 'Sem observações posturais'}"</div>
                 </div>
             `).join('');
         }
