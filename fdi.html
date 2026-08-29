@@ -26,11 +26,16 @@
 
         <!-- ABA 1: CALENDÁRIO -->
         <section id="calendar" class="tab-content space-y-4">
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <h2 class="font-bold text-slate-200 mb-2">Agenda de Sessões e Reabilitação</h2>
-                <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 mb-3 text-xs">
-                    <div class="font-semibold text-emerald-400">Sessão Coletiva Ativa: Conexão BLE Multiusuário</div>
-                    <div class="text-slate-400">Grade completa de 15 sensores simultâneos. Nota: O limite físico de conexões simultâneas depende do adaptador Bluetooth do computador (recomenda-se adaptador USB BLE 5.0+ para suportar 10+ cintas ativas ao mesmo tempo).</div>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h2 class="font-bold text-slate-200 text-sm">Agenda de Sessões e Reabilitação</h2>
+                <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 text-xs space-y-2">
+                    <div class="font-semibold text-emerald-400">Nota Técnica sobre o Limite de Conexões Bluetooth (Windows)</div>
+                    <p class="text-slate-300">
+                        O Windows e os adaptadores Bluetooth integrados de fábrica possuem uma restrição física de hardware no driver de rádio que geralmente bloqueia o pareamento acima de <strong>8 a 10 dispositivos GATT simultâneos</strong>. 
+                    </p>
+                    <p class="text-slate-400">
+                        Para conectar mais de 8 atletas/pacientes ao mesmo tempo na clínica, recomenda-se o uso de um <strong>Dongle USB Bluetooth 5.0 dedicado (ex: TP-Link UB500)</strong> inserido em uma porta USB frontal do computador.
+                    </p>
                 </div>
                 <button onclick="switchTab('group')" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded text-xs font-bold">Ir para Grupo ao Vivo</button>
             </div>
@@ -39,7 +44,7 @@
         <!-- ABA 2: GRUPO AO VIVO (15 SLOTS) -->
         <section id="group" class="tab-content hidden space-y-4">
             <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs">
-                <span>Painel de Monitoramento (15 Slots): <strong id="ble-global-status" class="text-amber-400">Pronto para Conectar</strong></span>
+                <span>Ativos no Rádio: <strong id="active-count" class="text-emerald-400">0</strong> / 15 Slots (Status: <strong id="ble-global-status" class="text-amber-400">Pronto</strong>)</span>
                 <div class="flex gap-2">
                     <button onclick="disconnectAllBluetooth()" class="bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded font-bold text-white">Desconectar Todos</button>
                     <button onclick="finishSession()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded font-bold text-white">Finish & Summarize</button>
@@ -219,7 +224,6 @@
                     <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded text-white font-bold">🖨️ Imprimir / Salvar PDF</button>
                 </div>
 
-                <!-- Contêiner Visual Dinâmico (Cards em formato de círculo/quadrado coloridos + Gráficos) -->
                 <div id="session-report-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <p class="text-slate-500 col-span-full">Nenhuma sessão finalizada recentemente. Clique em "Finish & Summarize" na aba Grupo ao Vivo para gerar os gráficos e cartões coloridos automaticamente.</p>
                 </div>
@@ -248,7 +252,6 @@
             event.currentTarget.classList.remove('text-slate-400');
         }
 
-        // Criar 15 slots independentes
         function initLiveGrid() {
             const grid = document.getElementById('live-grid');
             let html = '';
@@ -273,7 +276,28 @@
 
         let activeConnections = {};
 
+        function updateActiveCount() {
+            const count = Object.keys(activeConnections).length;
+            document.getElementById('active-count').innerText = count;
+            if(count > 0) {
+                document.getElementById('ble-global-status').innerText = `${count} Dispositivo(s) Ativo(s)`;
+                document.getElementById('ble-global-status').className = "text-emerald-400";
+            } else {
+                document.getElementById('ble-global-status').innerText = "Pronto";
+                document.getElementById('ble-global-status').className = "text-amber-400";
+            }
+        }
+
         async function connectSlot(index) {
+            if(activeConnections[index] && activeConnections[index].device) {
+                try {
+                    if(activeConnections[index].device.gatt.connected) {
+                        activeConnections[index].device.gatt.disconnect();
+                    }
+                } catch(e) {}
+                delete activeConnections[index];
+            }
+
             try {
                 document.getElementById(`status-${index}`).innerText = "Buscando...";
                 document.getElementById(`status-${index}`).className = "bg-slate-900 px-1.5 py-0.5 rounded text-[9px] text-blue-400";
@@ -307,14 +331,14 @@
                     }
                 });
 
-                document.getElementById('ble-global-status').innerText = "Sensores conectados";
-                document.getElementById('ble-global-status').className = "text-emerald-400";
+                updateActiveCount();
 
             } catch (err) {
                 console.error(err);
                 document.getElementById(`status-${index}`).innerText = "Erro / Limite";
                 document.getElementById(`status-${index}`).className = "bg-red-500/20 px-1.5 py-0.5 rounded text-[9px] text-red-400";
-                alert(`Não foi possível conectar no Slot ${index}.\nNota: O Windows e os adaptadores Bluetooth integrados possuem limite físico para conexões simultâneas (geralmente até 10 dispositivos GATT). Se já houver 10 conectados, desconecte um para parear o seguinte ou utilize um adaptador USB Bluetooth 5.0 dedicado.`);
+                
+                alert(`Não foi possível conectar no Slot ${index}.\n\nMotivo Técnico: O Windows atingiu o limite físico de conexões GATT do adaptador Bluetooth interno (neste computador, o teto atual travou em ${Object.keys(activeConnections).length} dispositivos).\n\nRecomendação: Utilize um adaptador USB Bluetooth 5.0 dedicado na clínica para suportar acima de 10-15 cintas simultâneas.`);
             }
         }
 
@@ -324,8 +348,7 @@
             });
             activeConnections = {};
             initLiveGrid();
-            document.getElementById('ble-global-status').innerText = "Desconectado";
-            document.getElementById('ble-global-status').className = "text-amber-400";
+            updateActiveCount();
         }
 
         function finishSession() {
@@ -361,7 +384,6 @@
                             <span class="text-[10px] text-slate-300 font-semibold truncate max-w-[140px]">${deviceName}</span>
                         </div>
 
-                        <!-- Círculo Centralizado com Média BPM -->
                         <div class="flex justify-center my-2">
                             <div class="w-24 h-24 rounded-full border-4 ${p.border} flex flex-col items-center justify-center bg-slate-900 shadow-inner">
                                 <span class="text-2xl font-black ${p.text}">${avgBpm}</span>
@@ -369,7 +391,6 @@
                             </div>
                         </div>
 
-                        <!-- Estatísticas em Quadrados/Barras -->
                         <div class="grid grid-cols-3 gap-1 text-center text-[10px]">
                             <div class="bg-slate-800 p-1.5 rounded border border-slate-700">
                                 <span class="text-slate-400 block">Pico</span>
@@ -393,7 +414,6 @@
             alert('Sessão finalizada! Dashboard visual e dinâmico gerado com sucesso.');
         }
 
-        // Alunos
         function saveStudent(e) {
             e.preventDefault();
             const name = document.getElementById('std-name').value;
