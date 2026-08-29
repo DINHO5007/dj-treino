@@ -4,137 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FDI.mm - Monitor de Frequência Cardíaca e Treinos</title>
-    <!-- Tailwind CSS para design moderno e responsivo -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js para os gráficos de análise -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans">
 
-    <!-- Cabeçalho -->
     <header class="bg-slate-800 border-b border-slate-700 p-4 text-center">
         <h1 class="text-xl font-bold text-emerald-400">FDI.mm System</h1>
-        <p class="text-xs text-slate-400">Transformando a abordagem aos treinos e reabilitação</p>
+        <p class="text-xs text-slate-400">Monitoramento Real & Conexão Bluetooth (BLE)</p>
     </header>
 
-    <!-- Navegação por Abas -->
     <nav class="flex justify-around bg-slate-800 border-b border-slate-700 text-xs sm:text-sm">
         <button onclick="switchTab('calendar')" class="tab-btn py-3 px-2 text-emerald-400 border-b-2 border-emerald-400 font-semibold">📅 Calendário</button>
-        <button onclick="switchTab('group')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">❤️ Grupo (Ao Vivo)</button>
-        <button onclick="switchTab('diary')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">📊 Diário & Medidas</button>
-        <button onclick="switchTab('analytics')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">📈 Análise</button>
+        <button onclick="switchTab('group')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">❤️ Grupo ao Vivo</button>
+        <button onclick="switchTab('students')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">👤 Cadastrar Aluno</button>
+        <button onclick="switchTab('diary')" class="tab-btn py-3 px-2 text-slate-400 font-semibold">📊 Medidas</button>
     </nav>
 
-    <!-- Conteúdo Principal -->
-    <main class="p-4 max-w-md mx-auto">
+    <main class="p-4 max-w-lg mx-auto">
 
         <!-- ABA 1: CALENDÁRIO -->
         <section id="calendar" class="tab-content space-y-4">
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-slate-200">Julho 2026</h2>
-                    <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">Planejamento</span>
+                    <h2 class="font-bold text-slate-200">Agenda de Treinos</h2>
+                    <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">Ativo</span>
                 </div>
-                <!-- Mini Grid Calendário -->
-                <div class="grid grid-cols-7 gap-1 text-center text-xs text-slate-400 mb-4">
-                    <div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div><div>Dom</div>
-                    <!-- Dias simulados -->
-                    <div class="p-2">1</div><div class="p-2">2</div><div class="p-2">3</div><div class="p-2">4</div><div class="p-2">5</div><div class="p-2">6</div><div class="p-2">7</div>
-                    <div class="p-2">8</div><div class="p-2">9</div><div class="p-2">10</div><div class="p-2">11</div><div class="p-2">12</div><div class="p-2">13</div><div class="p-2">14</div>
-                    <div class="p-2">15</div><div class="p-2">16</div><div class="p-2 bg-emerald-600 text-white rounded-full">19</div><div class="p-2">20</div><div class="p-2">21</div><div class="p-2">22</div><div class="p-2">23</div>
+                <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 mb-3">
+                    <div class="text-sm font-semibold text-emerald-400">Sessão de Reabilitação / Kinesioterapia</div>
+                    <div class="text-xs text-slate-400">Status: Pronto para iniciar conexão</div>
                 </div>
-                <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
-                    <div class="text-sm font-semibold text-emerald-400">Run / Corrida</div>
-                    <div class="text-xs text-slate-400">10:00 - 2026-07-19</div>
-                </div>
-                <div class="flex gap-2 mt-4">
-                    <button class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded text-xs font-bold">Add workout</button>
-                    <button class="flex-1 bg-blue-600 hover:bg-blue-500 py-2 rounded text-xs font-bold">Start workout</button>
-                </div>
+                <button onclick="switchTab('group')" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded text-xs font-bold">Ir para Monitoramento ao Vivo</button>
             </div>
         </section>
 
-        <!-- ABA 2: CONTROLE DE GRUPO -->
+        <!-- ABA 2: GRUPO AO VIVO & BLUETOOTH -->
         <section id="group" class="tab-content hidden space-y-3">
-            <div class="flex justify-between items-center bg-slate-800 p-2 rounded text-xs">
-                <span>Tempo: <strong class="text-emerald-400">00:38:52</strong></span>
-                <span class="bg-red-500/20 text-red-400 px-2 py-0.5 rounded">Ao Vivo</span>
+            <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col gap-2">
+                <div class="flex justify-between items-center text-xs">
+                    <span>Status do Sensor: <strong id="ble-status" class="text-amber-400">Desconectado</strong></span>
+                    <button onclick="connectBluetoothHR()" class="bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded font-bold text-white shadow">📡 Conectar Cinta/Sensor BLE</button>
+                </div>
+                <p class="text-[10px] text-slate-400">Use navegador compatível (Chrome/Edge) com Bluetooth ativado no PC ou celular.</p>
             </div>
-            <!-- Grid de Participantes (Exibição estilo card da imagem) -->
-            <div class="grid grid-cols-2 gap-2">
-                <div class="bg-emerald-600 p-3 rounded-lg flex flex-col justify-between h-24">
-                    <span class="text-xs font-bold">Sasha</span>
-                    <div class="text-center"><span class="text-2xl font-black">109</span> <span class="text-xs">BPM</span></div>
-                    <span class="text-[10px] text-right">3 Kcal</span>
-                </div>
-                <div class="bg-emerald-600 p-3 rounded-lg flex flex-col justify-between h-24">
-                    <span class="text-xs font-bold">Denis</span>
-                    <div class="text-center"><span class="text-2xl font-black">108</span> <span class="text-xs">BPM</span></div>
-                    <span class="text-[10px] text-right">8 Kcal</span>
-                </div>
-                <div class="bg-emerald-600 p-3 rounded-lg flex flex-col justify-between h-24">
-                    <span class="text-xs font-bold">Myrainer</span>
-                    <div class="text-center"><span class="text-2xl font-black">108</span> <span class="text-xs">BPM</span></div>
-                    <span class="text-[10px] text-right">3 Kcal</span>
-                </div>
-                <div class="bg-emerald-600 p-3 rounded-lg flex flex-col justify-between h-24">
-                    <span class="text-xs font-bold">Pier</span>
-                    <div class="text-center"><span class="text-2xl font-black">107</span> <span class="text-xs">BPM</span></div>
-                    <span class="text-[10px] text-right">6 Kcal</span>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between h-24">
-                    <span class="text-xs font-bold text-slate-400">Pai</span>
-                    <div class="text-center"><span class="text-2xl font-black">74</span> <span class="text-xs text-slate-400">BPM</span></div>
-                    <span class="text-[10px] text-right text-slate-400">3 Kcal</span>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between h-24">
-                    <span class="text-xs font-bold text-slate-400">Kiran</span>
-                    <div class="text-center"><span class="text-2xl font-black">60</span> <span class="text-xs text-slate-400">BPM</span></div>
-                    <span class="text-[10px] text-right text-slate-400">1 Kcal</span>
+
+            <div id="live-cards-container" class="grid grid-cols-2 gap-2">
+                <div class="bg-emerald-600 p-3 rounded-lg flex flex-col justify-between h-28 shadow-lg">
+                    <div class="flex justify-between items-center">
+                        <span id="live-name" class="text-xs font-bold truncate">Aguardando Aluno...</span>
+                        <span class="text-[10px] bg-black/30 px-1.5 py-0.5 rounded">LIVE</span>
+                    </div>
+                    <div class="text-center">
+                        <span id="live-bpm" class="text-3xl font-black">--</span> 
+                        <span class="text-xs">BPM</span>
+                    </div>
+                    <div class="flex justify-between text-[10px] opacity-90">
+                        <span id="live-zone">Zona: Repouso</span>
+                        <span>0 Kcal</span>
+                    </div>
                 </div>
             </div>
+
             <div class="flex gap-2 pt-2">
-                <button class="flex-1 bg-red-600 py-2 rounded text-xs font-bold">Stop</button>
-                <button class="flex-1 bg-emerald-600 py-2 rounded text-xs font-bold">Finish and summarize</button>
+                <button onclick="disconnectBluetooth()" class="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded text-xs font-bold">Desconectar</button>
+                <button onclick="alert('Resumo da sessão gravado com sucesso!')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded text-xs font-bold">Finish & Summarize</button>
             </div>
         </section>
 
-        <!-- ABA 3: DIÁRIO E MEDIDAS CORPORAIS -->
+        <!-- ABA 3: CADASTRO DE ALUNOS -->
+        <section id="students" class="tab-content hidden space-y-4">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h2 class="font-bold text-slate-200 text-sm">Novo Cadastro de Aluno/Paciente</h2>
+                <form id="student-form" onsubmit="saveStudent(event)" class="space-y-2 text-xs">
+                    <div>
+                        <label class="text-slate-400 block mb-1">Nome Completo:</label>
+                        <input type="text" id="std-name" required class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100" placeholder="Ex: Josivaldo / Aluno">
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="text-slate-400 block mb-1">Idade:</label>
+                            <input type="number" id="std-age" required class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100" placeholder="Anos">
+                        </div>
+                        <div>
+                            <label class="text-slate-400 block mb-1">Peso (kg):</label>
+                            <input type="number" step="0.1" id="std-weight" required class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100" placeholder="kg">
+                        </div>
+                        <div>
+                            <label class="text-slate-400 block mb-1">Altura (cm):</label>
+                            <input type="number" id="std-height" required class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-slate-100" placeholder="cm">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold mt-2">Salvar Aluno</button>
+                </form>
+            </div>
+
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <h3 class="font-bold text-slate-200 text-xs mb-2">Alunos Cadastrados</h3>
+                <div id="students-list" class="space-y-2 text-xs">
+                    <p class="text-slate-500">Nenhum aluno cadastrado ainda.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 4: DIÁRIO E MEDIDAS -->
         <section id="diary" class="tab-content hidden space-y-4">
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2 text-xs">
                 <div class="flex justify-between border-b border-slate-700 pb-2">
-                    <span class="font-bold text-slate-300">Denis (Workouts: 1)</span>
-                    <span class="text-emerald-400">Perfil Ativo</span>
+                    <span class="font-bold text-slate-300">Painel de Medidas Corporais</span>
+                    <span class="text-emerald-400">Avaliação</span>
                 </div>
-                <p><strong>Idade:</strong> 44 | <strong>Peso:</strong> 72kg | <strong>Altura:</strong> 175cm</p>
-                <p><strong>Pescoço:</strong> 38cm | <strong>Quadril:</strong> 92cm | <strong>IMC:</strong> 23.54 | <strong>Gordura (FAT):</strong> 22.04%</p>
-                <div class="mt-4 p-3 bg-slate-900 rounded border border-slate-700">
-                    <span class="text-slate-400 block mb-1">Qualidade do Treino:</span>
-                    <div class="text-yellow-400 text-sm">★★★★☆ (4/5)</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ABA 4: ANÁLISE E GRÁFICOS -->
-        <section id="analytics" class="tab-content hidden space-y-4">
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <h3 class="text-xs font-bold text-slate-300 mb-2">Resposta da Frequência Cardíaca (BPM)</h3>
-                <div class="h-48 bg-slate-900 p-2 rounded">
-                    <canvas id="heartRateChart"></canvas>
-                </div>
-            </div>
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <h3 class="text-xs font-bold text-slate-300 mb-2">Treinadores por Tempo Total</h3>
-                <div class="h-48 bg-slate-900 p-2 rounded flex justify-center">
-                    <canvas id="trainersChart"></canvas>
+                <p class="text-slate-400">Selecione um aluno cadastrado para visualizar as informações.</p>
+                <div id="diary-selected-student" class="p-3 bg-slate-900 rounded border border-slate-700 mt-2">
+                    Nenhum aluno selecionado. Cadastre e selecione na aba anterior.
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Script de Navegação e Gráficos -->
     <script>
+        let bluetoothDevice = null;
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(tabId).classList.remove('hidden');
@@ -145,37 +135,100 @@
             });
             event.currentTarget.classList.add('text-emerald-400', 'border-b-2', 'border-emerald-400');
             event.currentTarget.classList.remove('text-slate-400');
+            if(tabId === 'students') loadStudents();
         }
 
-        // Gráfico de Frequência Cardíaca
-        const ctxHR = document.getElementById('heartRateChart').getContext('2d');
-        new Chart(ctxHR, {
-            type: 'line',
-            data: {
-                labels: ['10m', '20m', '30m', '40m', '50m', '60m'],
-                datasets: [{
-                    label: 'Denis (BPM)',
-                    data: [110, 125, 118, 140, 135, 120],
-                    borderColor: '#10b981',
-                    tension: 0.3
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
+        function saveStudent(event) {
+            event.preventDefault();
+            const name = document.getElementById('std-name').value;
+            const age = document.getElementById('std-age').value;
+            const weight = document.getElementById('std-weight').value;
+            const height = document.getElementById('std-height').value;
 
-        // Gráfico de Pizza (Treinadores)
-        const ctxTrainers = document.getElementById('trainersChart').getContext('2d');
-        new Chart(ctxTrainers, {
-            type: 'pie',
-            data: {
-                labels: ['Denis', 'Pier', 'Another', 'Sasha'],
-                datasets: [{
-                    data: [40, 25, 20, 15],
-                    backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b']
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+            let students = JSON.parse(localStorage.getItem('fdi_students') || '[]');
+            students.push({ name, age, weight, height });
+            localStorage.setItem('fdi_students', JSON.stringify(students));
+
+            alert('Aluno cadastrado com sucesso!');
+            document.getElementById('student-form').reset();
+            loadStudents();
+        }
+
+        function loadStudents() {
+            const listEl = document.getElementById('students-list');
+            let students = JSON.parse(localStorage.getItem('fdi_students') || '[]');
+            if(students.length === 0) {
+                listEl.innerHTML = '<p class="text-slate-500">Nenhum aluno cadastrado ainda.</p>';
+                return;
+            }
+            listEl.innerHTML = students.map((s) => `
+                <div class="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-700">
+                    <div>
+                        <strong class="text-emerald-400">${s.name}</strong> (${s.age} anos, ${s.weight}kg)
+                    </div>
+                    <button onclick="selectActiveStudent('${s.name}')" class="bg-blue-600 px-2 py-1 rounded text-[10px] text-white">Selecionar</button>
+                </div>
+            `).join('');
+        }
+
+        function selectActiveStudent(name) {
+            document.getElementById('live-name').innerText = name;
+            document.getElementById('diary-selected-student').innerText = `Aluno Ativo Selecionado: ${name}`;
+            alert(`Aluno ${name} selecionado com sucesso!`);
+        }
+
+        async function connectBluetoothHR() {
+            try {
+                document.getElementById('ble-status').innerText = "Procurando sensor...";
+                document.getElementById('ble-status').className = "text-blue-400";
+
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: ['heart_rate'] }]
+                });
+
+                const server = await bluetoothDevice.gatt.connect();
+                const service = await server.getPrimaryService('heart_rate');
+                const characteristic = await service.getCharacteristic('heart_rate_measurement');
+
+                document.getElementById('ble-status').innerText = "Conectado!";
+                document.getElementById('ble-status').className = "text-emerald-400";
+
+                characteristic.startNotifications();
+                characteristic.addEventListener('characteristicvaluechanged', handleHeartRateMeasurement);
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('ble-status').innerText = "Falha / Cancelado";
+                document.getElementById('ble-status').className = "text-red-400";
+            }
+        }
+
+        function handleHeartRateMeasurement(event) {
+            const value = event.target.value;
+            const flags = value.getUint8(0);
+            let rate = 0;
+            if (flags & 0x01) {
+                rate = value.getUint16(1, true);
+            } else {
+                rate = value.getUint8(1);
+            }
+
+            document.getElementById('live-bpm').innerText = rate;
+            
+            let zone = "Repouso";
+            if (rate > 120) zone = "Intenso / Aeróbico";
+            else if (rate > 100) zone = "Moderado";
+            document.getElementById('live-zone').innerText = `Zona: ${zone}`;
+        }
+
+        function disconnectBluetooth() {
+            if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                bluetoothDevice.gatt.disconnect();
+            }
+            document.getElementById('ble-status').innerText = "Desconectado";
+            document.getElementById('ble-status').className = "text-amber-400";
+            document.getElementById('live-bpm').innerText = "--";
+        }
     </script>
 </body>
 </html>
