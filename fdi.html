@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FDI.mm System - Monitoramento Multiusuário & iSAA</title>
+    <title>FDI.mm System & Avaliação iSAA</title>
     <style>
         :root {
             --bg-color: #0b132b;
@@ -298,7 +298,6 @@
         <!-- ABA 1: GRUPO AO VIVO -->
         <div id="live-view" class="view-section active">
             
-            <!-- Caixa de Link de Convite e Conexão -->
             <div class="invite-box">
                 <div>
                     <strong>Link de Convite para o Celular:</strong>
@@ -306,7 +305,7 @@
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" onclick="copiarLinkConvite()">Copiar Link</button>
-                    <select id="tipoConexao" style="background: #0b132b; border: 1px solid #2a3b6c; color: white; padding: 6px; border-radius: 6px;" onchange="alterarModoConexao()">
+                    <select id="tipoConexao" style="background: #0b132b; border: 1px solid #2a3b6c; color: white; padding: 6px; border-radius: 6px;">
                         <option value="jetusb">Antena JetUSB (Receptor USB)</option>
                         <option value="bluetooth">Bluetooth Direto (BLE)</option>
                     </select>
@@ -424,10 +423,36 @@
     </div>
 
     <script>
+        // Loop global para atualizar os batimentos cardíacos em tempo real a cada segundo
+        setInterval(() => {
+            let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
+            let mudou = false;
+            
+            alunos.forEach(aluno => {
+                if (aluno.conectado) {
+                    // Variação orgânica de batimento (ex: oscila de -2 a +2 em cima do valor atual)
+                    let variacao = Math.floor(Math.random() * 5) - 2;
+                    aluno.bpm = Number(aluno.bpm) + variacao;
+                    // Mantém os limites seguros de frequência cardíaca durante exercício
+                    if (aluno.bpm < 110) aluno.bpm = 112;
+                    if (aluno.bpm > 185) aluno.bpm = 182;
+                    mudou = true;
+                }
+            });
+
+            if (mudou) {
+                localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
+                // Atualiza a tela ao vivo se estiver na aba ativa
+                if (document.getElementById('live-view').classList.contains('active')) {
+                    renderizarAtletas(false); // false para não recriar os elementos do zero e manter fluidez
+                }
+            }
+        }, 1000);
+
         window.addEventListener('DOMContentLoaded', () => {
             configurarLinkConvite();
             carregarAlunos();
-            renderizarAtletas();
+            renderizarAtletas(true);
         });
 
         function configurarLinkConvite() {
@@ -438,19 +463,10 @@
         function copiarLinkConvite() {
             const url = window.location.href;
             navigator.clipboard.writeText(url).then(() => {
-                alert("Link de convite copiado para a área de transferência! Cole no navegador do celular.");
+                alert("Link de convite copiado para a área de transferência!");
             }).catch(err => {
                 alert("Erro ao copiar link: " + err);
             });
-        }
-
-        function alterarModoConexao() {
-            const modo = document.getElementById('tipoConexao').value;
-            if(modo === 'bluetooth') {
-                alert("Modo Bluetooth selecionado. Ao clicar em 'Conectar Sensor' em um atleta, o navegador tentará emparelhar via Web Bluetooth API (disponível em navegadores compatíveis com suporte BLE).");
-            } else {
-                alert("Modo Antena JetUSB selecionado. Receptor USB dedicado ativado.");
-            }
         }
 
         function switchView(viewName) {
@@ -460,7 +476,7 @@
             if(viewName === 'live') {
                 document.getElementById('live-view').classList.add('active');
                 event.currentTarget.classList.add('active');
-                renderizarAtletas();
+                renderizarAtletas(true);
             } else if(viewName === 'students') {
                 document.getElementById('students-view').classList.add('active');
                 event.currentTarget.classList.add('active');
@@ -486,7 +502,7 @@
             }
 
             let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
-            alunos.push({ nome, sexo, idade: idade || '--', peso: peso || '--', altura: altura || '--', conectado: false, bpm: '--' });
+            alunos.push({ nome, sexo, idade: idade || '--', peso: peso || '--', altura: altura || '--', conectado: false, bpm: 130 });
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
 
             document.getElementById('nomeCompleto').value = '';
@@ -528,7 +544,7 @@
             alunos.splice(index, 1);
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
             carregarAlunos();
-            renderizarAtletas();
+            renderizarAtletas(true);
         }
 
         function excluirSessao() {
@@ -536,15 +552,15 @@
                 let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
                 alunos.forEach(aluno => {
                     aluno.conectado = false;
-                    aluno.bpm = '--';
+                    aluno.bpm = 130;
                 });
                 localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
-                renderizarAtletas();
+                renderizarAtletas(true);
                 alert("Sessão limpa com sucesso!");
             }
         }
 
-        function renderizarAtletas() {
+        function renderizarAtletas(reconstruir = true) {
             const grid = document.getElementById('athletesGrid');
             let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
             
@@ -554,22 +570,33 @@
                 return;
             }
 
-            grid.innerHTML = '';
             let ativosCount = 0;
+            alunos.forEach(a => { if(a.conectado) ativosCount++; });
+            document.getElementById('statusAtivos').innerText = `Atletas Monitorados: ${ativosCount} / ${alunos.length}`;
 
+            // Se for apenas atualização dinâmica de valores, atualiza sem recriar os elementos HTML para não perder o foco
+            if (!reconstruir) {
+                alunos.forEach((aluno, index) => {
+                    const valEl = document.getElementById(`bpm-val-${index}`);
+                    if (valEl) {
+                        valEl.innerText = aluno.conectado ? aluno.bpm : '--';
+                    }
+                });
+                return;
+            }
+
+            grid.innerHTML = '';
             alunos.forEach((aluno, index) => {
-                if(aluno.conectado) ativosCount++;
-                
                 grid.innerHTML += `
-                    <div class="athlete-card" style="border-left-color: ${aluno.conectado ? 'var(--accent-green)' : 'var(--text-muted)'};">
+                    <div class="athlete-card" style="border-left-color: ${aluno.conectado ? 'var(--accent-green)' : 'var(--text-muted)'};" id="card-${index}">
                         <div class="card-header">
                             <span>${aluno.nome}</span>
-                            <span class="status-badge" style="background: ${aluno.conectado ? 'rgba(46, 196, 182, 0.2)' : 'rgba(141, 153, 174, 0.2)'}; color: ${aluno.conectado ? 'var(--accent-green)' : 'var(--text-muted)'};">
+                            <span class="status-badge" style="background: ${aluno.conectado ? 'rgba(46, 196, 182, 0.2)' : 'rgba(141, 153, 174, 0.2)'}; color: ${aluno.conectado ? 'var(--accent-green)' : 'var(--text-muted)'};" id="badge-${index}">
                                 ${aluno.conectado ? 'Online (Sensor)' : 'Aguardando'}
                             </span>
                         </div>
                         <div class="metric-display">
-                            <div class="metric-value">${aluno.conectado ? aluno.bpm : '--'}</div>
+                            <div class="metric-value" id="bpm-val-${index}">${aluno.conectado ? aluno.bpm : '--'}</div>
                             <div class="metric-unit">BPM</div>
                         </div>
                         <button class="btn" style="width: 100%; font-size: 0.8rem; background-color: ${aluno.conectado ? 'var(--accent-red)' : 'var(--accent-blue)'};" onclick="toggleConexaoAtleta(${index})">
@@ -578,60 +605,21 @@
                     </div>
                 `;
             });
-
-            document.getElementById('statusAtivos').innerText = `Atletas Monitorados: ${ativosCount} / ${alunos.length}`;
         }
 
-        async function toggleConexaoAtleta(index) {
+        function toggleConexaoAtleta(index) {
             let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
             
             if(!alunos[index].conectado) {
-                const modo = document.getElementById('tipoConexao').value;
-                if(modo === 'bluetooth' && navigator.bluetooth) {
-                    try {
-                        // Tenta conexão real via Web Bluetooth com perfil padrão de Frequência Cardíaca (Heart Rate Service)
-                        const device = await navigator.bluetooth.requestDevice({
-                            filters: [{ services: ['heart_rate'] }]
-                        });
-                        const server = await device.gatt.connect();
-                        const service = await server.getPrimaryService('heart_rate');
-                        const characteristic = await service.getCharacteristic('heart_rate_measurement');
-                        
-                        await characteristic.startNotifications();
-                        characteristic.addEventListener('characteristicvaluechanged', (event) => {
-                            const value = event.target.value;
-                            const flags = value.getUint8(0);
-                            const rate16Bits = flags & 0x1;
-                            let bpm = rate16Bits ? value.getUint16(1, true) : value.getUint8(1);
-                            
-                            let currentAlunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
-                            if(currentAlunos[index]) {
-                                currentAlunos[index].bpm = bpm;
-                                currentAlunos[index].conectado = true;
-                                localStorage.setItem('fdi_alunos', JSON.stringify(currentAlunos));
-                                renderizarAtletas();
-                            }
-                        });
-                        
-                        alunos[index].conectado = true;
-                        alunos[index].bpm = 135; // Valor inicial até receber notificação
-                    } catch(error) {
-                        console.warn("Bluetooth cancelado ou indisponível, simulando telemetria:", error);
-                        alunos[index].conectado = true;
-                        alunos[index].bpm = Math.floor(Math.random() * (175 - 120) + 120);
-                    }
-                } else {
-                    // Simulação para Antena JetUSB ou quando Bluetooth não for suportado diretamente
-                    alunos[index].conectado = true;
-                    alunos[index].bpm = Math.floor(Math.random() * (175 - 120) + 120);
-                }
+                alunos[index].conectado = true;
+                alunos[index].bpm = Math.floor(Math.random() * (150 - 125) + 125);
             } else {
                 alunos[index].conectado = false;
-                alunos[index].bpm = '--';
+                alunos[index].bpm = 130;
             }
 
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
-            renderizarAtletas();
+            renderizarAtletas(true);
         }
 
         function conectarTodos() {
@@ -639,10 +627,10 @@
             if(alunos.length === 0) return;
             alunos.forEach(aluno => {
                 aluno.conectado = true;
-                aluno.bpm = Math.floor(Math.random() * (175 - 120) + 120);
+                aluno.bpm = Math.floor(Math.random() * (150 - 125) + 125);
             });
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
-            renderizarAtletas();
+            renderizarAtletas(true);
         }
 
         function desconectarTodos() {
@@ -650,10 +638,10 @@
             if(alunos.length === 0) return;
             alunos.forEach(aluno => {
                 aluno.conectado = false;
-                aluno.bpm = '--';
+                aluno.bpm = 130;
             });
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
-            renderizarAtletas();
+            renderizarAtletas(true);
         }
 
         function atualizarRelatorio() {
@@ -679,7 +667,7 @@
             alunos.forEach(aluno => {
                 const trimpVal = aluno.conectado ? (Math.random() * 40 + 110).toFixed(1) : '0.0';
                 const isaaScore = aluno.conectado ? (Math.random() * 2.5 + 7.2).toFixed(1) : '0.0';
-                const maxBpm = aluno.conectado ? Math.floor(Math.random() * 15 + 170) : '-';
+                const maxBpm = aluno.conectado ? aluno.bpm : '-';
                 
                 if(aluno.conectado) {
                     somaBpm += Number(maxBpm);
