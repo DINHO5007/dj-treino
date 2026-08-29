@@ -29,12 +29,9 @@
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
                 <h2 class="font-bold text-slate-200 text-sm">Agenda de Sessões e Reabilitação</h2>
                 <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 text-xs space-y-2">
-                    <div class="font-semibold text-emerald-400">Nota Técnica sobre o Limite de Conexões Bluetooth (Windows)</div>
+                    <div class="font-semibold text-emerald-400">Nota Técnica: Limite Atual de Conexões Bluetooth do Windows</div>
                     <p class="text-slate-300">
-                        O Windows e os adaptadores Bluetooth integrados de fábrica possuem uma restrição física de hardware no driver de rádio que geralmente bloqueia o pareamento acima de <strong>8 a 10 dispositivos GATT simultâneos</strong>. 
-                    </p>
-                    <p class="text-slate-400">
-                        Para conectar mais de 8 atletas/pacientes ao mesmo tempo na clínica, recomenda-se o uso de um <strong>Dongle USB Bluetooth 5.0 dedicado (ex: TP-Link UB500)</strong> inserido em uma porta USB frontal do computador.
+                        O seu adaptador Bluetooth atual estabilizou em <strong>9 dispositivos GATT simultâneos</strong>. Para ultrapassar essa marca e preencher todos os 15 slots, utilize um <strong>Adaptador USB Bluetooth 5.0 dedicado (ex: TP-Link UB500)</strong>.
                     </p>
                 </div>
                 <button onclick="switchTab('group')" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2 rounded text-xs font-bold">Ir para Grupo ao Vivo</button>
@@ -51,7 +48,6 @@
                 </div>
             </div>
 
-            <!-- Grade com os 15 slots -->
             <div id="live-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 <!-- Gerado via Script -->
             </div>
@@ -338,7 +334,7 @@
                 document.getElementById(`status-${index}`).innerText = "Erro / Limite";
                 document.getElementById(`status-${index}`).className = "bg-red-500/20 px-1.5 py-0.5 rounded text-[9px] text-red-400";
                 
-                alert(`Não foi possível conectar no Slot ${index}.\n\nMotivo Técnico: O Windows atingiu o limite físico de conexões GATT do adaptador Bluetooth interno (neste computador, o teto atual travou em ${Object.keys(activeConnections).length} dispositivos).\n\nRecomendação: Utilize um adaptador USB Bluetooth 5.0 dedicado na clínica para suportar acima de 10-15 cintas simultâneas.`);
+                alert(`Não foi possível conectar no Slot ${index}.\n\nO adaptador Bluetooth embutido atingiu o teto máximo de ${Object.keys(activeConnections).length} conexões simultâneas do Windows.\n\nDica: Para conectar até 15 atletas na clínica, utilize um Adaptador USB Bluetooth 5.0 dedicado.`);
             }
         }
 
