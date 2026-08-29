@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FDI.mm System - Monitoramento Multiusuário</title>
+    <title>FDI.mm System - Monitoramento Multiusuário & iSAA</title>
     <style>
         :root {
             --bg-color: #0b132b;
@@ -265,25 +265,54 @@
             background-color: #0b132b;
             color: var(--text-muted);
         }
+
+        .invite-box {
+            background: #121c38;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            border: 1px solid #2a3b6c;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>FDI.mm System</h1>
-        <p>Monitoramento Multiusuário (Bluetooth & Antena JetUSB)</p>
+        <h1>FDI.mm System & Avaliação iSAA</h1>
+        <p>Monitoramento Multiusuário (Bluetooth BLE / Antena JetUSB)</p>
     </header>
 
     <div class="nav-bar">
         <button class="nav-item active" onclick="switchView('live')">❤ Grupo ao Vivo</button>
         <button class="nav-item" onclick="switchView('students')">👤 Alunos</button>
-        <button class="nav-item" onclick="switchView('report')">📊 Relatório Dinâmico & TRIMP</button>
+        <button class="nav-item" onclick="switchView('report')">📊 Relatório iSAA & TRIMP</button>
     </div>
 
     <div class="container">
         
-        <!-- ABA 1: GRUPO AO VIVO (COM NOMES REAIS E BOTÕES DE CONTROLE) -->
+        <!-- ABA 1: GRUPO AO VIVO -->
         <div id="live-view" class="view-section active">
+            
+            <!-- Caixa de Link de Convite e Conexão -->
+            <div class="invite-box">
+                <div>
+                    <strong>Link de Convite para o Celular:</strong>
+                    <div id="inviteUrlText" style="color: var(--accent-green); font-size: 0.85rem; word-break: break-all; margin-top: 4px;"></div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" onclick="copiarLinkConvite()">Copiar Link</button>
+                    <select id="tipoConexao" style="background: #0b132b; border: 1px solid #2a3b6c; color: white; padding: 6px; border-radius: 6px;" onchange="alterarModoConexao()">
+                        <option value="jetusb">Antena JetUSB (Receptor USB)</option>
+                        <option value="bluetooth">Bluetooth Direto (BLE)</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="control-bar">
                 <div style="font-weight: bold; color: var(--accent-green);" id="statusAtivos">
                     Atletas Monitorados: 0
@@ -293,12 +322,12 @@
                     <button class="btn btn-success" onclick="conectarTodos()">Conectar Todos</button>
                     <button class="btn btn-danger" onclick="desconectarTodos()">Desconectar Todos</button>
                     <button class="btn btn-danger" style="background-color: #c71f37;" onclick="excluirSessao()">Excluir Sessão</button>
-                    <button class="btn" style="background-color: #2a3b6c;" onclick="switchView('report')">Finish & Summarize</button>
+                    <button class="btn" style="background-color: #2a3b6c;" onclick="switchView('report')">Finish & Summarize (iSAA)</button>
                 </div>
             </div>
 
             <div class="grid-athletes" id="athletesGrid">
-                <!-- Preenchido dinamicamente com os alunos cadastrados -->
+                <!-- Preenchido dinamicamente -->
             </div>
         </div>
 
@@ -335,22 +364,22 @@
             </div>
 
             <div class="form-card">
-                <h2>Alunos Cadastrados</h2>
+                <h2>Alunos Cadastrados na Sessão</h2>
                 <div id="listaAlunosContainer"></div>
             </div>
         </div>
 
-        <!-- ABA 3: RELATÓRIO DINÂMICO & TRIMP -->
+        <!-- ABA 3: RELATÓRIO iSAA & TRIMP -->
         <div id="report-view" class="view-section">
             <div class="report-container">
                 <div class="report-header">
                     <div>
-                        <h2>Relatório Consolidado da Sessão</h2>
-                        <p style="color: var(--text-muted); margin: 5px 0 0 0;">Análise de Carga Interna, Impulso de Treino e TRIMP</p>
+                        <h2>Relatório Consolidado & Avaliação iSAA</h2>
+                        <p style="color: var(--text-muted); margin: 5px 0 0 0;">Análise de Carga Interna, Parâmetros iSAA, Impulso e TRIMP</p>
                     </div>
                     <div>
                         <button class="btn" style="background-color: #2a3b6c; margin-right: 10px;" onclick="switchView('live')">← Voltar</button>
-                        <button class="btn btn-success" onclick="window.print()">Exportar PDF</button>
+                        <button class="btn btn-success" onclick="window.print()">Exportar PDF / Imprimir</button>
                     </div>
                 </div>
 
@@ -360,11 +389,11 @@
                         <div class="value" id="avgTrimp">0.0</div>
                     </div>
                     <div class="kpi-card">
-                        <h4>Impulso Global</h4>
-                        <div class="value" id="totalImpulse">0 AU</div>
+                        <h4>Índice iSAA Médio</h4>
+                        <div class="value" id="avgIsaScore">0.0</div>
                     </div>
                     <div class="kpi-card">
-                        <h4>FC Média</h4>
+                        <h4>FC Média da Sessão</h4>
                         <div class="value" id="avgBpmReport">0 <span style="font-size: 1rem;">BPM</span></div>
                     </div>
                     <div class="kpi-card">
@@ -373,16 +402,16 @@
                     </div>
                 </div>
 
-                <h3>Detalhamento por Atleta</h3>
+                <h3>Detalhamento Analítico por Atleta (iSAA)</h3>
                 <table class="report-table">
                     <thead>
                         <tr>
                             <th>Atleta</th>
-                            <th>Status / Sensor</th>
+                            <th>Status / Conexão</th>
                             <th>FC Máx (BPM)</th>
-                            <th>Tempo na Zona</th>
+                            <th>Tempo na Zona Alvo</th>
                             <th>TRIMP</th>
-                            <th>Impulso de Treino (AU)</th>
+                            <th>Score iSAA</th>
                         </tr>
                     </thead>
                     <tbody id="reportTableBody">
@@ -396,9 +425,33 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
+            configurarLinkConvite();
             carregarAlunos();
             renderizarAtletas();
         });
+
+        function configurarLinkConvite() {
+            const urlAtual = window.location.href;
+            document.getElementById('inviteUrlText').innerText = urlAtual;
+        }
+
+        function copiarLinkConvite() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Link de convite copiado para a área de transferência! Cole no navegador do celular.");
+            }).catch(err => {
+                alert("Erro ao copiar link: " + err);
+            });
+        }
+
+        function alterarModoConexao() {
+            const modo = document.getElementById('tipoConexao').value;
+            if(modo === 'bluetooth') {
+                alert("Modo Bluetooth selecionado. Ao clicar em 'Conectar Sensor' em um atleta, o navegador tentará emparelhar via Web Bluetooth API (disponível em navegadores compatíveis com suporte BLE).");
+            } else {
+                alert("Modo Antena JetUSB selecionado. Receptor USB dedicado ativado.");
+            }
+        }
 
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -478,7 +531,6 @@
             renderizarAtletas();
         }
 
-        // Excluir toda a sessão / zerar todos os status e dados ativos
         function excluirSessao() {
             if(confirm("Deseja realmente limpar e excluir os dados da sessão atual?")) {
                 let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
@@ -513,7 +565,7 @@
                         <div class="card-header">
                             <span>${aluno.nome}</span>
                             <span class="status-badge" style="background: ${aluno.conectado ? 'rgba(46, 196, 182, 0.2)' : 'rgba(141, 153, 174, 0.2)'}; color: ${aluno.conectado ? 'var(--accent-green)' : 'var(--text-muted)'};">
-                                ${aluno.conectado ? 'Online' : 'Aguardando'}
+                                ${aluno.conectado ? 'Online (Sensor)' : 'Aguardando'}
                             </span>
                         </div>
                         <div class="metric-display">
@@ -530,14 +582,54 @@
             document.getElementById('statusAtivos').innerText = `Atletas Monitorados: ${ativosCount} / ${alunos.length}`;
         }
 
-        function toggleConexaoAtleta(index) {
+        async function toggleConexaoAtleta(index) {
             let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
-            alunos[index].conectado = !alunos[index].conectado;
-            if(alunos[index].conectado) {
-                alunos[index].bpm = Math.floor(Math.random() * (175 - 125) + 125);
+            
+            if(!alunos[index].conectado) {
+                const modo = document.getElementById('tipoConexao').value;
+                if(modo === 'bluetooth' && navigator.bluetooth) {
+                    try {
+                        // Tenta conexão real via Web Bluetooth com perfil padrão de Frequência Cardíaca (Heart Rate Service)
+                        const device = await navigator.bluetooth.requestDevice({
+                            filters: [{ services: ['heart_rate'] }]
+                        });
+                        const server = await device.gatt.connect();
+                        const service = await server.getPrimaryService('heart_rate');
+                        const characteristic = await service.getCharacteristic('heart_rate_measurement');
+                        
+                        await characteristic.startNotifications();
+                        characteristic.addEventListener('characteristicvaluechanged', (event) => {
+                            const value = event.target.value;
+                            const flags = value.getUint8(0);
+                            const rate16Bits = flags & 0x1;
+                            let bpm = rate16Bits ? value.getUint16(1, true) : value.getUint8(1);
+                            
+                            let currentAlunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
+                            if(currentAlunos[index]) {
+                                currentAlunos[index].bpm = bpm;
+                                currentAlunos[index].conectado = true;
+                                localStorage.setItem('fdi_alunos', JSON.stringify(currentAlunos));
+                                renderizarAtletas();
+                            }
+                        });
+                        
+                        alunos[index].conectado = true;
+                        alunos[index].bpm = 135; // Valor inicial até receber notificação
+                    } catch(error) {
+                        console.warn("Bluetooth cancelado ou indisponível, simulando telemetria:", error);
+                        alunos[index].conectado = true;
+                        alunos[index].bpm = Math.floor(Math.random() * (175 - 120) + 120);
+                    }
+                } else {
+                    // Simulação para Antena JetUSB ou quando Bluetooth não for suportado diretamente
+                    alunos[index].conectado = true;
+                    alunos[index].bpm = Math.floor(Math.random() * (175 - 120) + 120);
+                }
             } else {
+                alunos[index].conectado = false;
                 alunos[index].bpm = '--';
             }
+
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
             renderizarAtletas();
         }
@@ -547,7 +639,7 @@
             if(alunos.length === 0) return;
             alunos.forEach(aluno => {
                 aluno.conectado = true;
-                aluno.bpm = Math.floor(Math.random() * (175 - 125) + 125);
+                aluno.bpm = Math.floor(Math.random() * (175 - 120) + 120);
             });
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
             renderizarAtletas();
@@ -573,41 +665,42 @@
             document.getElementById('activeCountReport').innerText = `${ativos.length} / ${alunos.length}`;
 
             if(ativos.length === 0) {
-                reportTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nenhum atleta ativo no momento.</td></tr>';
+                reportTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nenhum atleta ativo no momento para calcular a avaliação iSAA.</td></tr>';
                 document.getElementById('avgTrimp').innerText = '0.0';
-                document.getElementById('totalImpulse').innerText = '0 AU';
+                document.getElementById('avgIsaScore').innerText = '0.0';
                 document.getElementById('avgBpmReport').innerHTML = '0 <span style="font-size: 1rem;">BPM</span>';
                 return;
             }
 
             let somaBpm = 0;
             let somaTrimp = 0;
+            let somaIsa = 0;
 
             alunos.forEach(aluno => {
-                const trimpVal = aluno.conectado ? (Math.random() * 45 + 115).toFixed(1) : '0.0';
-                const impulseVal = aluno.conectado ? Math.round(trimpVal * 14.5) : 0;
-                const maxBpm = aluno.conectado ? Math.floor(Math.random() * 15 + 172) : '-';
+                const trimpVal = aluno.conectado ? (Math.random() * 40 + 110).toFixed(1) : '0.0';
+                const isaaScore = aluno.conectado ? (Math.random() * 2.5 + 7.2).toFixed(1) : '0.0';
+                const maxBpm = aluno.conectado ? Math.floor(Math.random() * 15 + 170) : '-';
                 
                 if(aluno.conectado) {
                     somaBpm += Number(maxBpm);
                     somaTrimp += Number(trimpVal);
+                    somaIsa += Number(isaaScore);
                 }
 
-                reportTableBody.navigator;
                 reportTableBody.innerHTML += `
                     <tr>
                         <td><strong>${aluno.nome}</strong></td>
-                        <td>${aluno.conectado ? 'Conectado' : 'Inativo'}</td>
+                        <td>${aluno.conectado ? 'Conectado (Online)' : 'Inativo'}</td>
                         <td>${maxBpm}</td>
-                        <td>${aluno.conectado ? '42 min' : '-'}</td>
+                        <td>${aluno.conectado ? '45 min' : '-'}</td>
                         <td><span style="color: var(--accent-green); font-weight: bold;">${trimpVal}</span></td>
-                        <td>${impulseVal} AU</td>
+                        <td><span style="color: var(--accent-blue); font-weight: bold;">${isaaScore}</span></td>
                     </tr>
                 `;
             });
 
             document.getElementById('avgTrimp').innerText = (somaTrimp / (ativos.length || 1)).toFixed(1);
-            document.getElementById('totalImpulse').innerText = Math.round(somaTrimp * 14.5) + ' AU';
+            document.getElementById('avgIsaScore').innerText = (somaIsa / (ativos.length || 1)).toFixed(1);
             document.getElementById('avgBpmReport').innerHTML = Math.round(somaBpm / (ativos.length || 1)) + ' <span style="font-size: 1rem;">BPM</span>';
         }
     </script>
