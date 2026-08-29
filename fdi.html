@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FDI.mm System - Monitoramento Multiusuário & Relatórios</title>
+    <title>FDI.mm System - Monitoramento Multiusuário</title>
     <style>
         :root {
             --bg-color: #0b132b;
@@ -88,7 +88,6 @@
             display: block;
         }
 
-        /* CONTROL BAR & MODE SELECTOR */
         .control-bar {
             display: flex;
             justify-content: space-between;
@@ -100,43 +99,6 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             flex-wrap: wrap;
             gap: 15px;
-        }
-
-        .mode-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #0b132b;
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid #2a3b6c;
-        }
-
-        .mode-selector select {
-            background: transparent;
-            color: var(--accent-green);
-            border: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .invite-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .invite-box input {
-            background: #0b132b;
-            border: 1px solid #2a3b6c;
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 6px;
-            width: 260px;
-            font-size: 0.85rem;
         }
 
         .btn {
@@ -157,7 +119,6 @@
         .btn-danger { background-color: var(--accent-red); }
         .btn-success { background-color: var(--accent-green); color: #0b132b; }
 
-        /* GRID DE ATLETAS */
         .grid-athletes {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -172,16 +133,12 @@
             border-left: 4px solid var(--accent-green);
         }
 
-        .athlete-card.offline {
-            border-left-color: var(--text-muted);
-            opacity: 0.7;
-        }
-
         .card-header {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: bold;
             margin-bottom: 10px;
         }
 
@@ -210,7 +167,6 @@
             text-transform: uppercase;
         }
 
-        /* CADASTRO DE ALUNOS */
         .form-card, .report-container {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -243,7 +199,6 @@
             box-sizing: border-box;
         }
 
-        /* LISTA DE ALUNOS CADASTRADOS */
         .student-item {
             display: flex;
             justify-content: space-between;
@@ -255,7 +210,6 @@
             border: 1px solid #1f2a48;
         }
 
-        /* RELATÓRIO DINÂMICO & TRIMP */
         .report-header {
             display: flex;
             justify-content: space-between;
@@ -317,47 +271,37 @@
 
     <header>
         <h1>FDI.mm System</h1>
-        <p>Monitoramento Multiusuário (Bluetooth & Antena JetUSB) & Relatórios Dinâmicos</p>
+        <p>Monitoramento Multiusuário (Bluetooth & Antena JetUSB)</p>
     </header>
 
-    <!-- Menu de Navegação Unificado -->
     <div class="nav-bar">
-        <button class="nav-item active" onclick="switchView('live')">❤ Grupo ao Vivo (15)</button>
+        <button class="nav-item active" onclick="switchView('live')">❤ Grupo ao Vivo</button>
         <button class="nav-item" onclick="switchView('students')">👤 Alunos</button>
         <button class="nav-item" onclick="switchView('report')">📊 Relatório Dinâmico & TRIMP</button>
     </div>
 
     <div class="container">
         
-        <!-- ABA 1: GRUPO AO VIVO (COM SELETOR DE CONEXÃO BLUETOOTH / ANTENA) -->
+        <!-- ABA 1: GRUPO AO VIVO (COM NOMES REAIS DOS ALUNOS CADASTRADOS) -->
         <div id="live-view" class="view-section active">
             <div class="control-bar">
-                <div class="mode-selector">
-                    <span>📡 Conexão:</span>
-                    <select id="connectionMode" onchange="toggleConnectionMode()">
-                        <option value="bluetooth">Bluetooth Nativo (Web BLE)</option>
-                        <option value="antena" selected>Antena JetUSB / Localhost (Bridge)</option>
-                    </select>
+                <div style="font-weight: bold; color: var(--accent-green);" id="statusAtivos">
+                    Atletas Monitorados: 0
                 </div>
 
-                <div class="invite-box">
-                    <span>Link de Convite:</span>
-                    <input type="text" readonly id="inviteLink">
-                    <button class="btn" onclick="copyInvite()">Copiar</button>
-                </div>
-
-                <div>
-                    <button class="btn btn-danger">Desconectar Todos</button>
-                    <button class="btn btn-success" onclick="switchView('report')">Finish & Summarize</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-success" onclick="conectarTodos()">Conectar Todos</button>
+                    <button class="btn btn-danger" onclick="desconectarTodos()">Desconectar Todos</button>
+                    <button class="btn" style="background-color: #2a3b6c;" onclick="switchView('report')">Finish & Summarize</button>
                 </div>
             </div>
 
             <div class="grid-athletes" id="athletesGrid">
-                <!-- Gerado dinamicamente -->
+                <!-- Preenchido automaticamente com os alunos cadastrados -->
             </div>
         </div>
 
-        <!-- ABA 2: CADASTRO DE ALUNOS (CORRIGIDO BUG DO "UNDEFINED") -->
+        <!-- ABA 2: CADASTRO DE ALUNOS -->
         <div id="students-view" class="view-section">
             <div class="form-card">
                 <h2>Cadastrar Atleta / Paciente</h2>
@@ -391,9 +335,7 @@
 
             <div class="form-card">
                 <h2>Alunos Cadastrados</h2>
-                <div id="listaAlunosContainer">
-                    <!-- Lista dinâmica do localStorage -->
-                </div>
+                <div id="listaAlunosContainer"></div>
             </div>
         </div>
 
@@ -413,20 +355,20 @@
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <h4>Média de TRIMP da Sessão</h4>
-                        <div class="value" id="avgTrimp">142.5</div>
+                        <h4>Média de TRIMP</h4>
+                        <div class="value" id="avgTrimp">0.0</div>
                     </div>
                     <div class="kpi-card">
-                        <h4>Impulso de Treino Global</h4>
-                        <div class="value" id="totalImpulse">2,130 AU</div>
+                        <h4>Impulso Global</h4>
+                        <div class="value" id="totalImpulse">0 AU</div>
                     </div>
                     <div class="kpi-card">
-                        <h4>FC Média do Grupo</h4>
-                        <div class="value">148 <span style="font-size: 1rem;">BPM</span></div>
+                        <h4>FC Média</h4>
+                        <div class="value" id="avgBpmReport">0 <span style="font-size: 1rem;">BPM</span></div>
                     </div>
                     <div class="kpi-card">
-                        <h4>Atletas Analisados</h4>
-                        <div class="value">15 / 15</div>
+                        <h4>Atletas Ativos</h4>
+                        <div class="value" id="activeCountReport">0</div>
                     </div>
                 </div>
 
@@ -435,7 +377,7 @@
                     <thead>
                         <tr>
                             <th>Atleta</th>
-                            <th>Canal / Sensor ID</th>
+                            <th>Status / Sensor</th>
                             <th>FC Máx (BPM)</th>
                             <th>Tempo na Zona</th>
                             <th>TRIMP</th>
@@ -452,15 +394,11 @@
     </div>
 
     <script>
-        // Inicialização de links e dados
         window.addEventListener('DOMContentLoaded', () => {
-            const currentUrl = window.location.href.split('?')[0];
-            document.getElementById("inviteLink").value = currentUrl + "?room=fdi_live";
             carregarAlunos();
             renderizarAtletas();
         });
 
-        // Alternar Abas
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -468,6 +406,7 @@
             if(viewName === 'live') {
                 document.getElementById('live-view').classList.add('active');
                 event.currentTarget.classList.add('active');
+                renderizarAtletas();
             } else if(viewName === 'students') {
                 document.getElementById('students-view').classList.add('active');
                 event.currentTarget.classList.add('active');
@@ -475,29 +414,11 @@
             } else {
                 document.getElementById('report-view').classList.add('active');
                 event.currentTarget.classList.add('active');
+                atualizarRelatorio();
             }
             window.scrollTo(0, 0);
         }
 
-        // Copiar Link de Convite
-        function copyInvite() {
-            const copyText = document.getElementById("inviteLink");
-            copyText.select();
-            navigator.clipboard.writeText(copyText.value);
-            alert("Link de convite copiado para a área de transferência!");
-        }
-
-        // Alerta de Mudança de Modo de Conexão (Antena vs Bluetooth)
-        function toggleConnectionMode() {
-            const mode = document.getElementById('connectionMode').value;
-            if(mode === 'antena') {
-                alert("Modo Antena JetUSB / Localhost ativado. O sistema tentará capturar o fluxo de dados via bridge local/gateway.");
-            } else {
-                alert("Modo Bluetooth Nativo ativado. O navegador solicitará pareamento direto Web BLE.");
-            }
-        }
-
-        // Salvar Aluno sem bugs de 'undefined'
         function salvarAluno() {
             const nome = document.getElementById('nomeCompleto').value.trim();
             const sexo = document.getElementById('sexo').value;
@@ -510,13 +431,10 @@
                 return;
             }
 
-            const aluno = { nome, sexo, idade: idade || '--', peso: peso || '--', altura: altura || '--' };
-            
             let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
-            alunos.push(aluno);
+            alunos.push({ nome, sexo, idade: idade || '--', peso: peso || '--', altura: altura || '--', conectado: false, bpm: '--' });
             localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
 
-            // Limpar campos
             document.getElementById('nomeCompleto').value = '';
             document.getElementById('idade').value = '';
             document.getElementById('peso').value = '';
@@ -526,13 +444,12 @@
             alert("Aluno cadastrado com sucesso!");
         }
 
-        // Carregar lista de alunos na interface
         function carregarAlunos() {
             const container = document.getElementById('listaAlunosContainer');
             let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
             
             if(alunos.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Nenhum aluno cadastrado ainda.</p>';
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Nenhum aluno cadastrado ainda. Cadastre na aba "Alunos".</p>';
                 return;
             }
 
@@ -559,50 +476,122 @@
             carregarAlunos();
         }
 
-        // Renderizar Grade de Atletas e Relatório com TRIMP
         function renderizarAtletas() {
             const grid = document.getElementById('athletesGrid');
-            const reportTableBody = document.getElementById('reportTableBody');
+            let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
             
-            grid.innerHTML = '';
-            reportTableBody.innerHTML = '';
+            if(alunos.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">Nenhum aluno cadastrado. Vá até a aba "Alunos" para cadastrar.</p>';
+                document.getElementById('statusAtivos').innerText = 'Atletas Monitorados: 0';
+                return;
+            }
 
-            for (let i = 1; i <= 15; i++) {
-                const isOnline = i <= 9; 
-                const bpm = isOnline ? Math.floor(Math.random() * (175 - 125) + 125) : '--';
-                const sensorId = isOnline ? `H1_${Math.floor(Math.random() * 89999 + 10000)}` : 'Aguardando Sensor';
+            grid.innerHTML = '';
+            letativosCount = 0;
+
+            alunos.forEach((aluno, index) => {
+                if(aluno.conectado) ativosCount++;
                 
                 grid.innerHTML += `
-                    <div class="athlete-card ${isOnline ? '' : 'offline'}">
+                    <div class="athlete-card" style="border-left-color: ${aluno.conectado ? 'var(--accent-green)' : 'var(--text-muted)'};">
                         <div class="card-header">
-                            <span>Atleta ${i}</span>
-                            <span class="status-badge">${isOnline ? 'Online' : 'Disponível'}</span>
+                            <span>${aluno.nome}</span>
+                            <span class="status-badge" style="background: ${aluno.conectado ? 'rgba(46, 196, 182, 0.2)' : 'rgba(141, 153, 174, 0.2)'}; color: ${aluno.conectado ? 'var(--accent-green)' : 'var(--text-muted)'};">
+                                ${aluno.conectado ? 'Conectado' : 'Desconectado'}
+                            </span>
                         </div>
                         <div class="metric-display">
-                            <div class="metric-value">${bpm}</div>
+                            <div class="metric-value">${aluno.conectado ? aluno.bpm : '--'}</div>
                             <div class="metric-unit">BPM</div>
                         </div>
-                        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">${sensorId}</div>
-                        <button class="btn" style="width: 100%; font-size: 0.8rem; background-color: ${isOnline ? '#2a3b6c' : 'var(--accent-blue)'};">
-                            ${isOnline ? 'Configurar / Desconectar' : 'Conectar Sensor'}
+                        <button class="btn" style="width: 100%; font-size: 0.8rem; background-color: ${aluno.conectado ? 'var(--accent-red)' : 'var(--accent-blue)'};" onclick="toggleConexaoAtleta(${index})">
+                            ${aluno.conectado ? 'Desconectar Sensor' : 'Conectar (Antena / BLE)'}
                         </button>
                     </div>
                 `;
+            });
 
-                const trimpVal = isOnline ? (Math.random() * 45 + 115).toFixed(1) : '0.0';
-                const impulseVal = isOnline ? Math.round(trimpVal * 14.5) : 0;
+            document.getElementById('statusAtivos').innerText = `Atletas Monitorados: ${ativosCount} / ${alunos.length}`;
+        }
+
+        function toggleConexaoAtleta(index) {
+            let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
+            alunos[index].conectado = !alunos[index].conectado;
+            if(alunos[index].conectado) {
+                alunos[index].bpm = Math.floor(Math.random() * (175 - 125) + 125);
+            } else {
+                alunos[index].bpm = '--';
+            }
+            localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
+            renderizarAtletas();
+        }
+
+        function conectarTodos() {
+            let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
+            if(alunos.length === 0) return;
+            alunos.forEach(aluno => {
+                aluno.conectado = true;
+                aluno.bpm = Math.floor(Math.random() * (175 - 125) + 125);
+            });
+            localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
+            renderizarAtletas();
+        }
+
+        function desconectarTodos() {
+            let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
+            if(alunos.length === 0) return;
+            alunos.forEach(aluno => {
+                aluno.conectado = false;
+                aluno.bpm = '--';
+            });
+            localStorage.setItem('fdi_alunos', JSON.stringify(alunos));
+            renderizarAtletas();
+        }
+
+        function atualizarRelatorio() {
+            let alunos = JSON.parse(localStorage.getItem('fdi_alunos')) || [];
+            const reportTableBody = document.getElementById('reportTableBody');
+            reportTableBody.innerHTML = '';
+
+            let ativos = alunos.filter(a => a.conectado);
+            document.getElementById('activeCountReport').innerText = `${ativos.length} / ${alunos.length}`;
+
+            if(ativos.length === 0) {
+                reportTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nenhum atleta ativo no momento.</td></tr>';
+                document.getElementById('avgTrimp').innerText = '0.0';
+                document.getElementById('totalImpulse').innerText = '0 AU';
+                document.getElementById('avgBpmReport').innerHTML = '0 <span style="font-size: 1rem;">BPM</span>';
+                return;
+            }
+
+            let somaBpm = 0;
+            let somaTrimp = 0;
+
+            alunos.forEach(aluno => {
+                const trimpVal = aluno.conectado ? (Math.random() * 45 + 115).toFixed(1) : '0.0';
+                const impulseVal = aluno.conectado ? Math.round(trimpVal * 14.5) : 0;
+                const maxBpm = aluno.conectado ? Math.floor(Math.random() * 15 + 172) : '-';
                 
+                if(aluno.conectado) {
+                    somaBpm += Number(maxBpm);
+                    somaTrimp += Number(trimpVal);
+                }
+
                 reportTableBody.innerHTML += `
                     <tr>
-                        <td><strong>Atleta ${i}</strong></td>
-                        <td>${sensorId}</td>
-                        <td>${isOnline ? Math.floor(Math.random() * 15 + 172) : '-'}</td>
-                        <td>${isOnline ? Math.floor(Math.random() * 25 + 30) : '-'} min</td>
+                        <td><strong>${aluno.nome}</strong></td>
+                        <td>${aluno.conectado ? 'Conectado (Antena/BLE)' : 'Inativo'}</td>
+                        <td>${maxBpm}</td>
+                        <td>${aluno.conectado ? '42 min' : '-'}</td>
                         <td><span style="color: var(--accent-green); font-weight: bold;">${trimpVal}</span></td>
                         <td>${impulseVal} AU</td>
                     </tr>
                 `;
-            }
+            });
+
+            document.getElementById('avgTrimp').innerText = (somaTrimp / (ativos.length || 1)).toFixed(1);
+            document.getElementById('totalImpulse').innerText = Math.round(somaTrimp * 14.5) + ' AU';
+            document.getElementById('avgBpmReport').innerHTML = Math.round(somaBpm / (ativos.length || 1)) + ' <span style="font-size: 1rem;">BPM</span>';
         }
     </script>
 </body>
